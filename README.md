@@ -1,5 +1,5 @@
 ## Scalatris
-The block pazzle game on scala (WIP)
+The block puzzle game on Scala (WIP)
 
 - mill 0.10.11
 - indigo
