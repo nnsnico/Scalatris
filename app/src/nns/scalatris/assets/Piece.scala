@@ -1,12 +1,12 @@
-package nns.tetris.assets
+package nns.scalatris.assets
 
 import indigo.*
 import indigo.shared.*
-import nns.tetris.GridSquareSize
+import nns.scalatris.GridSquareSize
 
 case class Position(val x: Int, val y: Int)
 
-sealed trait Tetrimino {
+sealed trait Piece {
   val blockSize: GridSquareSize
   val material: BlockMaterial
   val localPos: Seq[Position]
@@ -25,7 +25,7 @@ sealed trait Tetrimino {
 
 }
 
-final case class IKind(blockSize: GridSquareSize) extends Tetrimino:
+final case class IKind(blockSize: GridSquareSize) extends Piece:
   override val material: BlockMaterial = SkyBlue(blockSize)
 
   override val localPos: Seq[Position] = Seq(
@@ -35,7 +35,7 @@ final case class IKind(blockSize: GridSquareSize) extends Tetrimino:
     Position(3, 0),
   )
 
-final case class JKind(blockSize: GridSquareSize) extends Tetrimino:
+final case class JKind(blockSize: GridSquareSize) extends Piece:
   override val material: BlockMaterial = Blue(blockSize)
 
   override val localPos: Seq[Position] = Seq(
@@ -45,7 +45,7 @@ final case class JKind(blockSize: GridSquareSize) extends Tetrimino:
     Position(2, 1),
   )
 
-final case class LKind(blockSize: GridSquareSize) extends Tetrimino:
+final case class LKind(blockSize: GridSquareSize) extends Piece:
   override val material: BlockMaterial = Orange(blockSize)
 
   override val localPos: Seq[Position] = Seq(
@@ -55,7 +55,7 @@ final case class LKind(blockSize: GridSquareSize) extends Tetrimino:
     Position(2, 1),
   )
 
-final case class OKind(blockSize: GridSquareSize) extends Tetrimino:
+final case class OKind(blockSize: GridSquareSize) extends Piece:
   override val material: BlockMaterial = Yellow(blockSize)
 
   override val localPos: Seq[Position] = Seq(
@@ -65,7 +65,7 @@ final case class OKind(blockSize: GridSquareSize) extends Tetrimino:
     Position(1, 1),
   )
 
-final case class SKind(blockSize: GridSquareSize) extends Tetrimino:
+final case class SKind(blockSize: GridSquareSize) extends Piece:
   override val material: BlockMaterial = Green(blockSize)
 
   override val localPos: Seq[Position] = Seq(
@@ -75,7 +75,7 @@ final case class SKind(blockSize: GridSquareSize) extends Tetrimino:
     Position(1, 1),
   )
 
-final case class TKind(blockSize: GridSquareSize) extends Tetrimino:
+final case class TKind(blockSize: GridSquareSize) extends Piece:
   override val material = Purple(blockSize)
 
   override val localPos: Seq[Position] = Seq(
@@ -85,7 +85,7 @@ final case class TKind(blockSize: GridSquareSize) extends Tetrimino:
     Position(2, 1),
   )
 
-final case class ZKind(blockSize: GridSquareSize) extends Tetrimino:
+final case class ZKind(blockSize: GridSquareSize) extends Piece:
   override val material = Red(blockSize)
 
   override val localPos: Seq[Position] = Seq(

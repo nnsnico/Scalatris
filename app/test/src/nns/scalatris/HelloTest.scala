@@ -1,4 +1,4 @@
-package nns.tetris
+package nns.scalatris
 
 class MySuite extends munit.FunSuite {
   test("hello") {

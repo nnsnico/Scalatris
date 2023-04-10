@@ -1,4 +1,4 @@
-package nns.tetris
+package nns.scalatris
 
 import indigo.shared.assets.{AssetName, AssetType}
 import indigo.shared.materials.Material

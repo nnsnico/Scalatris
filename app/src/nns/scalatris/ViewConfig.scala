@@ -1,4 +1,4 @@
-package nns.tetris
+package nns.scalatris
 
 import indigo.*
 import indigoextras.geometry.BoundingBox

@@ -1,4 +1,4 @@
-package nns.tetris.extensions
+package nns.scalatris.extensions
 
 import indigo.shared.Startup
 

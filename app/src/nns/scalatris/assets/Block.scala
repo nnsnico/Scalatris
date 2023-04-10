@@ -1,16 +1,16 @@
-package nns.tetris.assets
+package nns.scalatris.assets
 
 import indigo.*
 import indigo.shared.*
 import indigo.shared.datatypes.Vector2
 import indigo.shared.scenegraph.Graphic
 import indigo.shared.materials.Material.Bitmap
-import nns.tetris.GridSquareSize
-import nns.tetris.GridSquareSize._
+import nns.scalatris.GridSquareSize
+import nns.scalatris.GridSquareSize._
 
 object Block extends Assets[Material.Bitmap]:
 
-  override protected val assetName: AssetName = AssetName("tetrimino_compact")
+  override protected val assetName: AssetName = AssetName("block")
 
   override protected[assets] val material = Material.Bitmap(assetName)
 

@@ -11,7 +11,7 @@ object app extends ScalaJSModule with MillIndigo {
 
   val gameAssetsDirectory: os.Path = os.pwd / "assets"
   val showCursor: Boolean          = true
-  val title: String                = "Tetris"
+  val title: String                = "Scalatris"
 
   val windowStartWidth: Int =
     720 // Width of Electron window, used with `indigoRun`.

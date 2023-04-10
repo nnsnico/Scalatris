@@ -1,8 +1,8 @@
-package nns.tetris
+package nns.scalatris
 
 import indigo.*
 import indigo.scenes.*
-import nns.tetris.scenes.TetrisScene
+import nns.scalatris.scenes.GameScene
 import cats.implicits._
 
 import scala.scalajs.js.annotation.JSExportTopLevel
@@ -38,11 +38,11 @@ object Main extends IndigoGame[ViewConfig, StartUpData, Unit, Unit]:
   // All Scenes
   override def scenes(viewConfig: ViewConfig): NonEmptyList[Scene[StartUpData, Unit, Unit]] =
     NonEmptyList(
-      TetrisScene,
+      GameScene,
     )
 
   // The first Scene
-  override def initialScene(viewConfig: ViewConfig): Option[SceneName] = Option(TetrisScene.name)
+  override def initialScene(viewConfig: ViewConfig): Option[SceneName] = Option(GameScene.name)
 
   // initialize global game model
   override def initialModel(startupData: StartUpData): Outcome[Unit] = Outcome(())

@@ -1,13 +1,13 @@
-package nns.tetris
+package nns.scalatris
 
 import indigo.*
 import indigoextras.geometry.BoundingBox
 import indigo.shared.config.GameViewport
 import indigo.shared.Outcome
-import nns.tetris.assets.Block
-import nns.tetris.assets.Font
-import nns.tetris.extensions._
-import nns.tetris.assets._
+import nns.scalatris.assets.Block
+import nns.scalatris.assets.Font
+import nns.scalatris.extensions._
+import nns.scalatris.assets._
 
 final case class StartUpData(
     viewConfig: ViewConfig,
@@ -16,7 +16,7 @@ final case class StartUpData(
 
 final case class StaticAssets(
     stage: Seq[Shape.Box],
-    tetrimino: Tetrimino,
+    piece: Piece,
 )
 
 object StartUpData:
@@ -36,7 +36,7 @@ object StartUpData:
             offsetX = viewConfig.gridSquareSize,
             offsetY = viewConfig.gridSquareSize
           ),
-          tetrimino = block,
+          piece = block,
         ),
       ),
     )

@@ -1,9 +1,9 @@
-package nns.tetris.assets
+package nns.scalatris.assets
 
 import indigo.*
 import indigo.shared.*
 import indigoextras.geometry.BoundingBox
-import nns.tetris.GridSquareSize
+import nns.scalatris.GridSquareSize
 
 final case class Grid(squareSize: GridSquareSize):
 
