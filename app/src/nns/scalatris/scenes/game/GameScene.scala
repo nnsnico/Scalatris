@@ -1,4 +1,4 @@
-package nns.scalatris.scenes
+package nns.scalatris.scenes.game
 
 import indigo.*
 import indigo.scenes.*
@@ -8,16 +8,17 @@ import indigo.shared.scenegraph.Graphic
 import nns.scalatris.assets.Font
 import nns.scalatris.GridSquareSize._
 import nns.scalatris.assets.Grid
+import nns.scalatris.ViewModel
 
-object GameScene extends Scene[StartUpData, Unit, Unit]:
+object GameScene extends Scene[StartUpData, Unit, ViewModel]:
   type SceneModel     = Unit
-  type SceneViewModel = Unit
+  type SceneViewModel = Group
 
   override def name: SceneName = SceneName("scalatris")
 
   override def modelLens: Lens[Unit, Unit] = Lens.unit
 
-  override def viewModelLens: Lens[Unit, Unit] = Lens.unit
+  override def viewModelLens: Lens[ViewModel, Group] = Lens.readOnly(_.stage)
 
   override def eventFilters: EventFilters =
     EventFilters.Restricted.withViewModelFilter(_ => None)
@@ -30,13 +31,13 @@ object GameScene extends Scene[StartUpData, Unit, Unit]:
   override def updateViewModel(
       context: SceneContext[StartUpData],
       model: Unit,
-      viewModel: Unit,
-  ): GlobalEvent => Outcome[SceneViewModel] = _ => Outcome(())
+      viewModel: Group,
+  ): GlobalEvent => Outcome[SceneViewModel] = _ => Outcome(viewModel)
 
   override def present(
       context: SceneContext[StartUpData],
       model: Unit,
-      viewModel: Unit,
+      viewModel: Group,
   ): Outcome[SceneUpdateFragment] = Outcome {
     val horizontalCenter = context.startUpData.viewConfig.horizontalCenter
     val verticalCenter   = context.startUpData.viewConfig.verticalCenter
@@ -45,13 +46,7 @@ object GameScene extends Scene[StartUpData, Unit, Unit]:
       .addLayer(
         Layer(
           BindingKey("ui"),
-          Batch.fromSeq(
-            context.startUpData.staticAssets.stage ++ context
-              .startUpData
-              .staticAssets
-              .piece
-              .createPiece(),
-          ) |+|
+          viewModel.children |+|
             Batch(
               Font.toText("scalatris", horizontalCenter, verticalCenter).alignCenter,
             ),

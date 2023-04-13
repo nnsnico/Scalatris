@@ -20,8 +20,8 @@ final case class ViewConfig(
     magnificationLevel: Int,
     viewport: GameViewport,
 ):
-  val horizontalCenter      = (viewport.width / magnificationLevel) / 2
-  val verticalCenter        = (viewport.height / magnificationLevel) / 2
+  val horizontalCenter = (viewport.width / magnificationLevel) / 2
+  val verticalCenter   = (viewport.height / magnificationLevel) / 2
 
   val stageHorizontalCenter = horizontalCenter - (
     gridSquareSize * stageSize.horizontalCenter.toInt

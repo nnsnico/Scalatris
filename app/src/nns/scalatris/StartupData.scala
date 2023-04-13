@@ -1,9 +1,8 @@
 package nns.scalatris
 
 import indigo.*
+import indigo.shared.*
 import indigoextras.geometry.BoundingBox
-import indigo.shared.config.GameViewport
-import indigo.shared.Outcome
 import nns.scalatris.assets.Block
 import nns.scalatris.assets.Font
 import nns.scalatris.extensions._
@@ -15,8 +14,7 @@ final case class StartUpData(
 )
 
 final case class StaticAssets(
-    stage: Seq[Shape.Box],
-    piece: Piece,
+    blockMaterial: Seq[BlockMaterial],
 )
 
 object StartUpData:
@@ -27,20 +25,11 @@ object StartUpData:
   private[this] def createStartupData(
       viewConfig: ViewConfig,
   ): Option[StartUpData] =
-    val block = LKind(
-      x = viewConfig.stageHorizontalCenter,
-      blockSize = viewConfig.gridSquareSize,
-    )
     Some(
       StartUpData(
         viewConfig = viewConfig,
         staticAssets = StaticAssets(
-          stage = Grid(
-            x = viewConfig.stageHorizontalCenter,
-            gridSize = viewConfig.gridSquareSize,
-            stageSize = viewConfig.stageSize,
-          ).createStageBounds,
-          piece = block,
+          blockMaterial = Block.materials(viewConfig.gridSquareSize),
         ),
       ),
     )

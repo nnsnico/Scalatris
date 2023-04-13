@@ -19,6 +19,16 @@ object Block extends Assets[Material.Bitmap]:
     AssetPath(baseUrl + "assets/" + assetName + ".png"),
   )
 
+  def materials(size: GridSquareSize): Seq[BlockMaterial] = Seq(
+    Blue(size),
+    Green(size),
+    Red(size),
+    Orange(size),
+    Purple(size),
+    SkyBlue(size),
+    Yellow(size),
+  )
+
 sealed trait BlockMaterial:
   def bitmap: Graphic[Material.Bitmap]
 
