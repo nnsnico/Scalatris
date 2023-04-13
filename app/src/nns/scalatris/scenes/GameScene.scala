@@ -45,19 +45,15 @@ object GameScene extends Scene[StartUpData, Unit, Unit]:
       .addLayer(
         Layer(
           BindingKey("ui"),
-          Batch.fromSeq(context.startUpData.staticAssets.stage) |+|
-            Batch.fromSeq(
-              context
-                .startUpData
-                .staticAssets
-                .piece
-                .createPiece(
-                  offsetX = context.startUpData.viewConfig.gridSquareSize,
-                  offsetY = context.startUpData.viewConfig.gridSquareSize,
-                ),
-            ) |+|
+          Batch.fromSeq(
+            context.startUpData.staticAssets.stage ++ context
+              .startUpData
+              .staticAssets
+              .piece
+              .createPiece(),
+          ) |+|
             Batch(
-              Font.toText("hogehoge", horizontalCenter, verticalCenter).alignCenter,
+              Font.toText("scalatris", horizontalCenter, verticalCenter).alignCenter,
             ),
         ),
       )

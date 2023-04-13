@@ -17,7 +17,7 @@ object app extends ScalaJSModule with MillIndigo {
     720 // Width of Electron window, used with `indigoRun`.
 
   val windowStartHeight: Int =
-    516 // Height of Electron window, used with `indigoRun`.
+    500 // Height of Electron window, used with `indigoRun`.
 
   val disableFrameRateLimit: Boolean = false
   val backgroundColor: String        = "black"

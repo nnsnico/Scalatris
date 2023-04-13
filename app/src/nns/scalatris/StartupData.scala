@@ -24,18 +24,22 @@ object StartUpData:
   def initialize(viewConfig: ViewConfig): Outcome[Startup[StartUpData]] =
     Outcome(createStartupData(viewConfig).toStartup)
 
-  private[this] def createStartupData(viewConfig: ViewConfig): Option[StartUpData] =
-    val blockSize = viewConfig.gridSquareSize
-    val block     = IKind(blockSize)
+  private[this] def createStartupData(
+      viewConfig: ViewConfig,
+  ): Option[StartUpData] =
+    val block = LKind(
+      x = viewConfig.stageHorizontalCenter,
+      blockSize = viewConfig.gridSquareSize,
+    )
     Some(
       StartUpData(
         viewConfig = viewConfig,
         staticAssets = StaticAssets(
-          stage = Grid(viewConfig.gridSquareSize).createStageBounds(
-            gridSize = viewConfig.gridSize,
-            offsetX = viewConfig.gridSquareSize,
-            offsetY = viewConfig.gridSquareSize
-          ),
+          stage = Grid(
+            x = viewConfig.stageHorizontalCenter,
+            gridSize = viewConfig.gridSquareSize,
+            stageSize = viewConfig.stageSize,
+          ).createStageBounds,
           piece = block,
         ),
       ),
