@@ -5,7 +5,7 @@ import nns.scalatris.assets.Grid
 import nns.scalatris.assets.Piece
 import nns.scalatris.assets.Position
 
-final case class ViewModel(stage: Group, piece: Group)
+final case class ViewModel(stage: Group)
 
 object ViewModel:
 
@@ -17,15 +17,6 @@ object ViewModel:
           gridSize = startupData.viewConfig.gridSquareSize,
           stageSize = startupData.viewConfig.stageSize,
         ).createStageBounds,
-      ),
-    ),
-    Group(
-      Batch.fromSeq(
-        Piece.fromBlockMaterial(
-          initialPosition = Position(startupData.viewConfig.stageHorizontalCenter, 0),
-          blockSize = startupData.viewConfig.gridSquareSize,
-          blockMaterials = startupData.staticAssets.blockMaterial,
-        ),
       ),
     ),
   )

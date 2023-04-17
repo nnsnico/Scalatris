@@ -9,14 +9,15 @@ import nns.scalatris.assets.Font
 import nns.scalatris.GridSquareSize._
 import nns.scalatris.assets.Grid
 import nns.scalatris.ViewModel
+import nns.scalatris.model.GameModel
 
-object GameScene extends Scene[StartUpData, Unit, ViewModel]:
-  type SceneModel     = Unit
+object GameScene extends Scene[StartUpData, GameModel, ViewModel]:
+  type SceneModel     = GameModel
   type SceneViewModel = Group
 
   override def name: SceneName = SceneName("scalatris")
 
-  override def modelLens: Lens[Unit, Unit] = Lens.unit
+  override def modelLens: Lens[GameModel, GameModel] = Lens.keepLatest
 
   override def viewModelLens: Lens[ViewModel, Group] = Lens.readOnly(_.stage)
 
@@ -25,33 +26,27 @@ object GameScene extends Scene[StartUpData, Unit, ViewModel]:
 
   override def updateModel(
       context: SceneContext[StartUpData],
-      model: Unit,
-  ): GlobalEvent => Outcome[SceneModel] = _ => Outcome(())
+      model: GameModel,
+  ): GlobalEvent => Outcome[SceneModel] =
+    model.update(
+      gridSquareSize = context.startUpData.viewConfig.gridSquareSize,
+      gameTime = context.gameTime,
+    )
 
   override def updateViewModel(
       context: SceneContext[StartUpData],
-      model: Unit,
+      model: GameModel,
       viewModel: Group,
   ): GlobalEvent => Outcome[SceneViewModel] = _ => Outcome(viewModel)
 
   override def present(
       context: SceneContext[StartUpData],
-      model: Unit,
+      model: GameModel,
       viewModel: Group,
-  ): Outcome[SceneUpdateFragment] = Outcome {
-    val horizontalCenter = context.startUpData.viewConfig.horizontalCenter
-    val verticalCenter   = context.startUpData.viewConfig.verticalCenter
-    SceneUpdateFragment
-      .empty
-      .addLayer(
-        Layer(
-          BindingKey("ui"),
-          viewModel.children |+|
-            Batch(
-              Font.toText("scalatris", horizontalCenter, verticalCenter).alignCenter,
-            ),
-        ),
-      )
-  }
+  ): Outcome[SceneUpdateFragment] = GameView.update(
+    viewConfig = context.startUpData.viewConfig,
+    model = model,
+    stage = viewModel,
+  )
 
   override def subSystems: Set[SubSystem] = Set()

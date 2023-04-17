@@ -3,14 +3,66 @@ package nns.scalatris.assets
 import indigo.*
 import indigo.shared.*
 import nns.scalatris.GridSquareSize
-import cats.implicits.*
+import cats.syntax.all._
+import cats.data._
+import cats._
+import scala.util.Random
+import nns.scalatris.ViewConfig
 
 final case class Position(val x: Int, val y: Int)
 
-sealed trait Piece:
+sealed abstract class Piece(
+    val position: Position,
+    val direction: PieceDirection,
+    val blockSize: GridSquareSize,
+    val material: BlockMaterial,
+):
   val localPos: Seq[Position]
 
-final case class IKind(blockSize: GridSquareSize) extends Piece:
+  def update(gridSquareSize: GridSquareSize): Piece = this.direction match {
+    case PieceDirection.Neutral => this
+    case PieceDirection.Down    => this
+    case PieceDirection.Left    =>
+      val currentPosition = this.position
+      Piece.move(
+        piece = this,
+        position = currentPosition.copy(
+          x = currentPosition.x - gridSquareSize.toInt,
+        ),
+      )
+    case PieceDirection.Right   =>
+      val currentPosition = this.position
+      Piece.move(
+        piece = this,
+        position = currentPosition.copy(
+          x = currentPosition.x + gridSquareSize.toInt,
+        ),
+      )
+  }
+
+  def changeDirection(direction: PieceDirection): Piece = this match {
+    case k: IKind =>
+      k.copy(direction = direction)
+    case k: JKind =>
+      k.copy(direction = direction)
+    case k: LKind =>
+      k.copy(direction = direction)
+    case k: OKind =>
+      k.copy(direction = direction)
+    case k: SKind =>
+      k.copy(direction = direction)
+    case k: TKind =>
+      k.copy(direction = direction)
+    case k: ZKind =>
+      k.copy(direction = direction)
+  }
+
+final case class IKind(
+    override val position: Position,
+    override val direction: PieceDirection,
+    override val blockSize: GridSquareSize,
+    override val material: BlockMaterial,
+) extends Piece(position, direction, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(0, 0),
@@ -19,7 +71,12 @@ final case class IKind(blockSize: GridSquareSize) extends Piece:
     Position(3, 0),
   )
 
-final case class JKind(blockSize: GridSquareSize) extends Piece:
+final case class JKind(
+    override val position: Position,
+    override val direction: PieceDirection,
+    override val blockSize: GridSquareSize,
+    override val material: BlockMaterial,
+) extends Piece(position, direction, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(0, 0),
@@ -28,7 +85,12 @@ final case class JKind(blockSize: GridSquareSize) extends Piece:
     Position(2, 1),
   )
 
-final case class LKind(blockSize: GridSquareSize) extends Piece:
+final case class LKind(
+    override val position: Position,
+    override val direction: PieceDirection,
+    override val blockSize: GridSquareSize,
+    override val material: BlockMaterial,
+) extends Piece(position, direction, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(2, 0),
@@ -37,7 +99,12 @@ final case class LKind(blockSize: GridSquareSize) extends Piece:
     Position(2, 1),
   )
 
-final case class OKind(blockSize: GridSquareSize) extends Piece:
+final case class OKind(
+    override val position: Position,
+    override val direction: PieceDirection,
+    override val blockSize: GridSquareSize,
+    override val material: BlockMaterial,
+) extends Piece(position, direction, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(0, 0),
@@ -46,7 +113,12 @@ final case class OKind(blockSize: GridSquareSize) extends Piece:
     Position(1, 1),
   )
 
-final case class SKind(blockSize: GridSquareSize) extends Piece:
+final case class SKind(
+    override val position: Position,
+    override val direction: PieceDirection,
+    override val blockSize: GridSquareSize,
+    override val material: BlockMaterial,
+) extends Piece(position, direction, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(1, 0),
@@ -55,7 +127,12 @@ final case class SKind(blockSize: GridSquareSize) extends Piece:
     Position(1, 1),
   )
 
-final case class TKind(blockSize: GridSquareSize) extends Piece:
+final case class TKind(
+    override val position: Position,
+    override val direction: PieceDirection,
+    override val blockSize: GridSquareSize,
+    override val material: BlockMaterial,
+) extends Piece(position, direction, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(0, 1),
@@ -64,7 +141,12 @@ final case class TKind(blockSize: GridSquareSize) extends Piece:
     Position(2, 1),
   )
 
-final case class ZKind(blockSize: GridSquareSize) extends Piece:
+final case class ZKind(
+    override val position: Position,
+    override val direction: PieceDirection,
+    override val blockSize: GridSquareSize,
+    override val material: BlockMaterial,
+) extends Piece(position, direction, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(0, 0),
@@ -75,29 +157,99 @@ final case class ZKind(blockSize: GridSquareSize) extends Piece:
 
 object Piece:
 
-  def fromBlockMaterial(
-      initialPosition: Position,
-      blockSize: GridSquareSize,
-      blockMaterials: Seq[BlockMaterial],
-  ): Seq[Graphic[Material.Bitmap]] = for {
-    material <- blockMaterials
-    piece    <- materialToPiece(material).toSeq
-    localPos <- piece.localPos
-  } yield material
-    .bitmap
-    .moveTo(
-      x = ((blockSize * localPos.x) + initialPosition.x).toInt,
-      y = ((blockSize * localPos.y) + initialPosition.y).toInt,
-    )
+  def init(x: Int, y: Int, blockMaterials: Seq[BlockMaterial]): Option[Piece] =
+    for {
+      index     <- Some(Random.nextInt(blockMaterials.length))
+      pieceList <- fromBlockMaterial(x, y, blockMaterials)
+      piece     <- pieceList.get(index)
+    } yield piece
 
-  private def materialToPiece(material: BlockMaterial): Option[Piece] =
+  def move(piece: Piece, position: Position): Piece = piece match {
+    case k: IKind =>
+      k.copy(position = position, direction = PieceDirection.Neutral)
+    case k: JKind =>
+      k.copy(position = position, direction = PieceDirection.Neutral)
+    case k: LKind =>
+      k.copy(position = position, direction = PieceDirection.Neutral)
+    case k: OKind =>
+      k.copy(position = position, direction = PieceDirection.Neutral)
+    case k: SKind =>
+      k.copy(position = position, direction = PieceDirection.Neutral)
+    case k: TKind =>
+      k.copy(position = position, direction = PieceDirection.Neutral)
+    case k: ZKind =>
+      k.copy(position = position, direction = PieceDirection.Neutral)
+  }
+
+  private def fromBlockMaterial(
+      x: Int,
+      y: Int,
+      blockMaterials: Seq[BlockMaterial],
+  ): Option[Seq[Piece]] =
+    blockMaterials.traverse(m => materialToPiece(x, y, m))
+
+  private def materialToPiece(
+      x: Int,
+      y: Int,
+      material: BlockMaterial,
+  ): Option[Piece] =
+    val initPosition  = Position(x, y)
+    val initDirection = PieceDirection.Neutral
     material match {
-      case Blue(size)    => JKind(blockSize = size).some
-      case Green(size)   => SKind(blockSize = size).some
-      case Red(size)     => ZKind(blockSize = size).some
-      case Orange(size)  => LKind(blockSize = size).some
-      case Purple(size)  => TKind(blockSize = size).some
-      case SkyBlue(size) => IKind(blockSize = size).some
-      case Yellow(size)  => OKind(blockSize = size).some
-      case _             => none
+      case material @ Blue(size)    =>
+        JKind(
+          position = initPosition,
+          direction = initDirection,
+          blockSize = size,
+          material,
+        ).some
+      case material @ Green(size)   =>
+        SKind(
+          position = initPosition,
+          direction = initDirection,
+          blockSize = size,
+          material,
+        ).some
+      case material @ Red(size)     =>
+        ZKind(
+          position = initPosition,
+          direction = initDirection,
+          blockSize = size,
+          material,
+        ).some
+      case material @ Orange(size)  =>
+        LKind(
+          position = initPosition,
+          direction = initDirection,
+          blockSize = size,
+          material,
+        ).some
+      case material @ Purple(size)  =>
+        TKind(
+          position = initPosition,
+          direction = initDirection,
+          blockSize = size,
+          material,
+        ).some
+      case material @ SkyBlue(size) =>
+        IKind(
+          position = initPosition,
+          direction = initDirection,
+          blockSize = size,
+          material,
+        ).some
+      case material @ Yellow(size)  =>
+        OKind(
+          position = initPosition,
+          direction = initDirection,
+          blockSize = size,
+          material,
+        ).some
+      case _                        => none
     }
+
+enum PieceState:
+  case INITIALIZE, FALLING, LANDED
+
+enum PieceDirection:
+  case Neutral, Left, Right, Down
