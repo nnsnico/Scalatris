@@ -250,7 +250,7 @@ object Piece:
     }
 
 enum PieceState:
-  case INITIALIZE, FALLING, LANDED
+  case Initialize, Falling, Landed
 
 enum PieceDirection:
   case Neutral, Left, Right, Down

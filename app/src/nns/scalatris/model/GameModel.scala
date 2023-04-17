@@ -63,7 +63,7 @@ object GameModel:
       y = 0,
       blockMaterials = blockMaterial,
     ),
-    pieceState = PieceState.INITIALIZE,
+    pieceState = PieceState.Initialize,
     controlScheme = controlScheme,
     tickDelay = Seconds(1),
     lastUpdated = Seconds.zero,
