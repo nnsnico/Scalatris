@@ -1,4 +1,4 @@
-package nns.scalatris.assets
+package nns.scalatris.model
 
 import indigo.*
 import indigo.shared.*
@@ -8,6 +8,7 @@ import cats.data._
 import cats._
 import scala.util.Random
 import nns.scalatris.ViewConfig
+import nns.scalatris.assets._
 
 final case class Position(val x: Int, val y: Int)
 

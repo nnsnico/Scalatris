@@ -2,7 +2,7 @@ package nns.scalatris.scenes.game
 
 import indigo.*
 import nns.scalatris.ViewConfig
-import nns.scalatris.model.GameModel
+import nns.scalatris.model.{GameModel, Piece}
 import nns.scalatris.assets._
 import nns.scalatris.GridSquareSize
 import indigo.logger._

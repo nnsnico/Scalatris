@@ -2,7 +2,7 @@ package nns.scalatris.model
 
 import indigo.*
 import nns.scalatris.ViewConfig
-import nns.scalatris.assets._
+import nns.scalatris.assets.BlockMaterial
 import indigo.shared.Outcome
 import nns.scalatris.model.ControlScheme._
 import nns.scalatris.GridSquareSize

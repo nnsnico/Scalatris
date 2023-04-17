@@ -1,8 +1,6 @@
 package nns.scalatris.model
 
 import indigo.*
-import nns.scalatris.assets.Piece
-import nns.scalatris.assets.PieceDirection
 
 enum ControlScheme:
   case Turning(left: Key, right: Key)
