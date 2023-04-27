@@ -2,16 +2,15 @@ package nns.scalatris
 
 import indigo.*
 import indigo.scenes.*
-import nns.scalatris.model.GameModel
+import nns.scalatris.model.GlobalModel
 import nns.scalatris.scenes.game.GameScene
 import cats.syntax.all._
-
 import scala.scalajs.js.annotation.JSExportTopLevel
 import indigo.shared.datatypes.Rectangle
-import nns.scalatris.model.ControlScheme
+import nns.scalatris.model.PieceDirection
 
 @JSExportTopLevel("IndigoGame")
-object Main extends IndigoGame[ViewConfig, StartUpData, GameModel, ViewModel]:
+object Main extends IndigoGame[ViewConfig, StartUpData, GlobalModel, ViewModel]:
 
   // 1. Initialize View config
   override def boot(
@@ -42,7 +41,7 @@ object Main extends IndigoGame[ViewConfig, StartUpData, GameModel, ViewModel]:
   // All Scenes
   override def scenes(
       viewConfig: ViewConfig,
-  ): NonEmptyList[Scene[StartUpData, GameModel, ViewModel]] =
+  ): NonEmptyList[Scene[StartUpData, GlobalModel, ViewModel]] =
     NonEmptyList(
       GameScene,
     )
@@ -54,26 +53,25 @@ object Main extends IndigoGame[ViewConfig, StartUpData, GameModel, ViewModel]:
     )
 
   // initialize global game model
-  override def initialModel(startupData: StartUpData): Outcome[GameModel] =
+  override def initialModel(startupData: StartUpData): Outcome[GlobalModel] =
     Outcome(
-      GameModel.init(
+      GlobalModel.init(
         viewConfig = startupData.viewConfig,
         blockMaterial = startupData.staticAssets.blockMaterial,
-        controlScheme = ControlScheme.turningKeys,
       ),
     )
 
   // on update global game model
   override def updateModel(
       context: FrameContext[StartUpData],
-      model: GameModel,
-  ): GlobalEvent => Outcome[GameModel] =
+      model: GlobalModel,
+  ): GlobalEvent => Outcome[GlobalModel] =
     _ => Outcome(model)
 
   // initialize view state
   override def initialViewModel(
       startupData: StartUpData,
-      model: GameModel,
+      model: GlobalModel,
   ): Outcome[ViewModel] =
     Outcome(
       ViewModel.init(startupData),
@@ -82,13 +80,13 @@ object Main extends IndigoGame[ViewConfig, StartUpData, GameModel, ViewModel]:
   // on update view state
   override def updateViewModel(
       context: FrameContext[StartUpData],
-      model: GameModel,
+      model: GlobalModel,
       viewModel: ViewModel,
   ): GlobalEvent => Outcome[ViewModel] = _ => Outcome(viewModel)
 
   override def present(
       context: FrameContext[StartUpData],
-      model: GameModel,
+      model: GlobalModel,
       viewModel: ViewModel,
   ): Outcome[SceneUpdateFragment] = Outcome(
     SceneUpdateFragment

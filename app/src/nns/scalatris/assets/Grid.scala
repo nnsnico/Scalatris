@@ -16,12 +16,12 @@ final case class Grid(
   def createStageBounds: Seq[Shape.Box] = for {
     stagePosX <- (0 until stageSize.width.toInt).toSeq
     stagePosY <- (0 until stageSize.height.toInt).toSeq
-  } yield box(
+  } yield drawBox(
     (gridSize * stagePosX) + x,
     (gridSize * stagePosY) + y,
   )
 
-  private def box(x: GridSquareSize, y: GridSquareSize) = Shape.Box(
+  private def drawBox(x: GridSquareSize, y: GridSquareSize) = Shape.Box(
     Rectangle(Point(x.toInt, y.toInt), Size(gridSize.toInt, gridSize.toInt)),
     Fill.None,
     Stroke(1, RGBA.SeaGreen),

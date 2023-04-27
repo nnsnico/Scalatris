@@ -14,56 +14,38 @@ final case class Position(val x: Int, val y: Int)
 
 sealed abstract class Piece(
     val position: Position,
-    val direction: PieceDirection,
     val blockSize: GridSquareSize,
     val material: BlockMaterial,
 ):
   val localPos: Seq[Position]
 
-  def update(gridSquareSize: GridSquareSize): Piece = this.direction match {
-    case PieceDirection.Neutral => this
-    case PieceDirection.Down    => this
-    case PieceDirection.Left    =>
-      val currentPosition = this.position
-      Piece.move(
-        piece = this,
-        position = currentPosition.copy(
-          x = currentPosition.x - gridSquareSize.toInt,
-        ),
-      )
-    case PieceDirection.Right   =>
-      val currentPosition = this.position
-      Piece.move(
-        piece = this,
-        position = currentPosition.copy(
-          x = currentPosition.x + gridSquareSize.toInt,
-        ),
-      )
-  }
-
-  def changeDirection(direction: PieceDirection): Piece = this match {
-    case k: IKind =>
-      k.copy(direction = direction)
-    case k: JKind =>
-      k.copy(direction = direction)
-    case k: LKind =>
-      k.copy(direction = direction)
-    case k: OKind =>
-      k.copy(direction = direction)
-    case k: SKind =>
-      k.copy(direction = direction)
-    case k: TKind =>
-      k.copy(direction = direction)
-    case k: ZKind =>
-      k.copy(direction = direction)
-  }
+  def update(gridSquareSize: GridSquareSize, direction: PieceDirection): Piece =
+    direction match
+      case PieceDirection.Neutral => this
+      // TODO: down
+      case PieceDirection.Down    => this
+      case PieceDirection.Left    =>
+        val currentPosition = this.position
+        Piece.move(
+          piece = this,
+          position = currentPosition.copy(
+            x = currentPosition.x - gridSquareSize.toInt,
+          ),
+        )
+      case PieceDirection.Right   =>
+        val currentPosition = this.position
+        Piece.move(
+          piece = this,
+          position = currentPosition.copy(
+            x = currentPosition.x + gridSquareSize.toInt,
+          ),
+        )
 
 final case class IKind(
     override val position: Position,
-    override val direction: PieceDirection,
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
-) extends Piece(position, direction, blockSize, material):
+) extends Piece(position, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(0, 0),
@@ -74,10 +56,9 @@ final case class IKind(
 
 final case class JKind(
     override val position: Position,
-    override val direction: PieceDirection,
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
-) extends Piece(position, direction, blockSize, material):
+) extends Piece(position, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(0, 0),
@@ -88,10 +69,9 @@ final case class JKind(
 
 final case class LKind(
     override val position: Position,
-    override val direction: PieceDirection,
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
-) extends Piece(position, direction, blockSize, material):
+) extends Piece(position, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(2, 0),
@@ -102,10 +82,9 @@ final case class LKind(
 
 final case class OKind(
     override val position: Position,
-    override val direction: PieceDirection,
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
-) extends Piece(position, direction, blockSize, material):
+) extends Piece(position, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(0, 0),
@@ -116,10 +95,9 @@ final case class OKind(
 
 final case class SKind(
     override val position: Position,
-    override val direction: PieceDirection,
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
-) extends Piece(position, direction, blockSize, material):
+) extends Piece(position, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(1, 0),
@@ -130,10 +108,9 @@ final case class SKind(
 
 final case class TKind(
     override val position: Position,
-    override val direction: PieceDirection,
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
-) extends Piece(position, direction, blockSize, material):
+) extends Piece(position, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(0, 1),
@@ -144,10 +121,9 @@ final case class TKind(
 
 final case class ZKind(
     override val position: Position,
-    override val direction: PieceDirection,
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
-) extends Piece(position, direction, blockSize, material):
+) extends Piece(position, blockSize, material):
 
   override val localPos: Seq[Position] = Seq(
     Position(0, 0),
@@ -167,19 +143,19 @@ object Piece:
 
   def move(piece: Piece, position: Position): Piece = piece match {
     case k: IKind =>
-      k.copy(position = position, direction = PieceDirection.Neutral)
+      k.copy(position = position)
     case k: JKind =>
-      k.copy(position = position, direction = PieceDirection.Neutral)
+      k.copy(position = position)
     case k: LKind =>
-      k.copy(position = position, direction = PieceDirection.Neutral)
+      k.copy(position = position)
     case k: OKind =>
-      k.copy(position = position, direction = PieceDirection.Neutral)
+      k.copy(position = position)
     case k: SKind =>
-      k.copy(position = position, direction = PieceDirection.Neutral)
+      k.copy(position = position)
     case k: TKind =>
-      k.copy(position = position, direction = PieceDirection.Neutral)
+      k.copy(position = position)
     case k: ZKind =>
-      k.copy(position = position, direction = PieceDirection.Neutral)
+      k.copy(position = position)
   }
 
   private def fromBlockMaterial(
@@ -200,49 +176,42 @@ object Piece:
       case material @ Blue(size)    =>
         JKind(
           position = initPosition,
-          direction = initDirection,
           blockSize = size,
           material,
         ).some
       case material @ Green(size)   =>
         SKind(
           position = initPosition,
-          direction = initDirection,
           blockSize = size,
           material,
         ).some
       case material @ Red(size)     =>
         ZKind(
           position = initPosition,
-          direction = initDirection,
           blockSize = size,
           material,
         ).some
       case material @ Orange(size)  =>
         LKind(
           position = initPosition,
-          direction = initDirection,
           blockSize = size,
           material,
         ).some
       case material @ Purple(size)  =>
         TKind(
           position = initPosition,
-          direction = initDirection,
           blockSize = size,
           material,
         ).some
       case material @ SkyBlue(size) =>
         IKind(
           position = initPosition,
-          direction = initDirection,
           blockSize = size,
           material,
         ).some
       case material @ Yellow(size)  =>
         OKind(
           position = initPosition,
-          direction = initDirection,
           blockSize = size,
           material,
         ).some
@@ -253,4 +222,35 @@ enum PieceState:
   case Initialize, Falling, Landed
 
 enum PieceDirection:
-  case Neutral, Left, Right, Down
+  case Neutral
+  case Left
+  case Right
+  case Down
+
+object PieceDirection:
+
+  enum ControlScheme:
+    case Neutral
+    case Turning(left: Key, right: Key)
+    case Falling(down: Key)
+
+  val turningKeys: ControlScheme.Turning =
+    ControlScheme.Turning(Key.KEY_H, Key.KEY_L)
+
+  val fallingKeys: ControlScheme.Falling = ControlScheme.Falling(Key.KEY_J)
+
+  extension (cs: ControlScheme)
+
+    def toPieceDirection(keyboardEvent: KeyboardEvent): PieceDirection =
+      (cs, keyboardEvent) match
+        case (ControlScheme.Turning(key, _), KeyboardEvent.KeyDown(code))
+            if code === key =>
+          PieceDirection.Left
+        case (ControlScheme.Turning(_, key), KeyboardEvent.KeyDown(code))
+            if code === key =>
+          PieceDirection.Right
+        case (ControlScheme.Falling(key), KeyboardEvent.KeyDown(code))
+            if code === key =>
+          PieceDirection.Down
+        case _ =>
+          PieceDirection.Neutral
