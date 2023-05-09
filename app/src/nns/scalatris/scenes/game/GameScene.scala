@@ -4,24 +4,25 @@ import indigo.*
 import indigo.scenes.*
 import indigo.shared.Outcome
 import indigo.shared.scenegraph.Graphic
-import indigo.IndigoLogger.*
-import nns.scalatris._
-import nns.scalatris.StartUpData
 import nns.scalatris.GridSquareSize._
+import nns.scalatris.StartUpData
+import nns.scalatris._
 import nns.scalatris.assets._
 import nns.scalatris.model.GlobalModel
 
-object GameScene extends BaseScene[StartUpData, GlobalModel, ViewModel]:
+object GameScene extends Scene[StartUpData, GlobalModel, ViewModel]:
   type SceneViewModel = Group
-  type Controller     = GameController
+  type SceneModel     = GameModel
 
   override def name: SceneName = SceneName("scalatris")
 
-  override def modelLens: Lens[GlobalModel, GameController] =
+  override def modelLens: Lens[GlobalModel, GameModel] =
     Lens(
-      _.gameController,
-      (globalModel, controller) =>
-        globalModel.copy(gameController = controller),
+      _.gameController.gameModel,
+      (globalModel, model) =>
+        globalModel.copy(
+          gameController = globalModel.gameController.copy(gameModel = model),
+        ),
     )
 
   override def viewModelLens: Lens[ViewModel, Group] = Lens.readOnly(_.stage)
@@ -31,33 +32,28 @@ object GameScene extends BaseScene[StartUpData, GlobalModel, ViewModel]:
 
   override def updateModel(
       context: SceneContext[StartUpData],
-      controller: GameController,
-  ): GlobalEvent => Outcome[GameController] =
-    case FrameTick        =>
-      controller.updateFrame(
-        viewConfig = context.startUpData.viewConfig,
-        gameTime = context.gameTime,
-      )
-    case e: KeyboardEvent =>
-      controller.handleKeyboard(
-        e,
-        context.startUpData.viewConfig.gridSquareSize,
-      )
+      model: GameModel,
+  ): GlobalEvent => Outcome[GameModel] =
+    GameController.handleEvent(
+      model,
+      context.gameTime,
+      context.startUpData.viewConfig,
+    )
 
   override def updateViewModel(
       context: SceneContext[StartUpData],
-      model: Controller,
+      model: GameModel,
       viewModel: Group,
   ): GlobalEvent => Outcome[SceneViewModel] = _ => Outcome(viewModel)
 
   override def present(
       context: SceneContext[StartUpData],
-      controller: Controller,
+      model: GameModel,
       viewModel: Group,
   ): Outcome[SceneUpdateFragment] =
     GameView.update(
       viewConfig = context.startUpData.viewConfig,
-      model = controller.gameModel,
+      model = model,
       stage = viewModel,
     )
 

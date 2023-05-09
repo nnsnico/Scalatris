@@ -7,6 +7,8 @@ import nns.scalatris.ViewConfig
 import nns.scalatris.GridSquareSize
 import nns.scalatris.model.PieceDirection.ControlScheme
 import nns.scalatris.model.PieceDirection
+import indigoextras.geometry.Vertex
+import indigoextras.geometry.BoundingBox
 
 final case class GameModel private (
     piece: Option[Piece],
@@ -23,8 +25,7 @@ object GameModel:
       blockMaterial: Seq[BlockMaterial],
   ): GameModel = GameModel(
     piece = Piece.init(
-      x = viewConfig.stageHorizontalCenter,
-      y = 0,
+      position = viewConfig.stageSize.position,
       blockMaterials = blockMaterial,
     ),
     currentDirection = PieceDirection.Neutral,
@@ -41,8 +42,8 @@ object GameModel:
   def updatePiece(
       model: GameModel,
       currentTime: Seconds,
-      gridSquareSize: GridSquareSize,
+      stageSize: BoundingBox,
   ): GameModel = model.copy(
-    piece = model.piece.map(p => p.update(gridSquareSize, model.currentDirection)),
+    piece = model.piece.map(p => p.update(stageSize, model.currentDirection)),
     lastUpdated = currentTime,
   )

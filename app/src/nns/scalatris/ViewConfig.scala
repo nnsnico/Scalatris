@@ -2,6 +2,7 @@ package nns.scalatris
 
 import indigo.*
 import indigoextras.geometry.BoundingBox
+import indigoextras.geometry.Vertex
 
 opaque type GridSquareSize = Int
 
@@ -9,9 +10,16 @@ object GridSquareSize:
   def apply(i: Int): GridSquareSize = i
 
   extension (s: GridSquareSize)
-    def toInt: Int                                 = identity(s)
-    def *(v: GridSquareSize | Int): GridSquareSize = math.multiplyExact(s, v)
-    def +(v: GridSquareSize | Int): GridSquareSize = math.addExact(s, v)
+
+    def toInt: Int = identity(s)
+
+    def *(v: GridSquareSize | Int | Double): GridSquareSize = v match
+      case i: Int => math.multiplyExact(s, i)
+      case d: Double => math.multiplyExact(s, d.toInt)
+
+    def +(v: GridSquareSize | Int | Double): GridSquareSize = v match
+      case i: Int => math.addExact(s, i)
+      case d: Double => math.addExact(s, d.toInt)
 
 final case class ViewConfig(
     gridSize: BoundingBox,
@@ -23,10 +31,6 @@ final case class ViewConfig(
   val horizontalCenter = (viewport.width / magnificationLevel) / 2
   val verticalCenter   = (viewport.height / magnificationLevel) / 2
 
-  val stageHorizontalCenter = horizontalCenter - (
-    gridSquareSize * stageSize.horizontalCenter.toInt
-  ).toInt
-
 object ViewConfig:
   final private val gridSquareSize     = GridSquareSize(12)
   final private val magnificationLevel = 2
@@ -35,10 +39,23 @@ object ViewConfig:
 
     val gridSize  = BoundingBox(width = 30, height = 20)
     val stageSize = BoundingBox(width = 10, height = 20)
+    val viewport = GameViewport(
+        ((gridSquareSize * gridSize.width.toInt) * magnificationLevel).toInt,
+        ((gridSquareSize * gridSize.height.toInt) * magnificationLevel).toInt,
+      )
+    val horizontalCenter = (viewport.width / magnificationLevel) / 2
+    val stageHorizontalCenterStart = horizontalCenter - (
+      gridSquareSize * stageSize.horizontalCenter
+    ).toInt
 
     ViewConfig(
       gridSize = gridSize,
-      stageSize = stageSize,
+      stageSize = stageSize.copy(
+        position = Vertex(
+          x = stageHorizontalCenterStart,
+          y = 0,
+        )
+      ),
       gridSquareSize = gridSquareSize,
       magnificationLevel = magnificationLevel,
       viewport = GameViewport(

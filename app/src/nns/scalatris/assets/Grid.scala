@@ -1,14 +1,13 @@
 package nns.scalatris.assets
 
 import indigo.*
+import indigo.logger.*
 import indigo.shared.*
 import indigoextras.geometry.BoundingBox
+import indigoextras.geometry.Vertex
 import nns.scalatris.GridSquareSize
-import indigo.logger.*
 
 final case class Grid(
-    x: Int = 0,
-    y: Int = 0,
     gridSize: GridSquareSize,
     stageSize: BoundingBox,
 ):
@@ -17,8 +16,8 @@ final case class Grid(
     stagePosX <- (0 until stageSize.width.toInt).toSeq
     stagePosY <- (0 until stageSize.height.toInt).toSeq
   } yield drawBox(
-    (gridSize * stagePosX) + x,
-    (gridSize * stagePosY) + y,
+    (gridSize * stagePosX) + stageSize.x,
+    (gridSize * stagePosY) + stageSize.y,
   )
 
   private def drawBox(x: GridSquareSize, y: GridSquareSize) = Shape.Box(
