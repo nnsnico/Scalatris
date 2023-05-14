@@ -10,7 +10,7 @@ import nns.scalatris.{GridSquareSize, ViewConfig}
 final case class GameModel private (
     piece: Option[Piece],
     currentDirection: PieceDirection,
-    controlScheme: ControlScheme,
+    controlScheme: Seq[ControlScheme],
     tickDelay: Seconds,
     lastUpdated: Seconds,
 )
@@ -21,24 +21,21 @@ object GameModel:
       viewConfig: ViewConfig,
       blockMaterial: Seq[BlockMaterial],
   ): GameModel = GameModel(
-    piece = Piece.init(
-      position = viewConfig.stageSize.position,
-      blockMaterials = blockMaterial,
-    ),
+    piece = Piece.init(blockMaterials = blockMaterial),
     currentDirection = PieceDirection.Neutral,
-    controlScheme = PieceDirection.turningKeys,
+    controlScheme =
+      Seq(PieceDirection.turningKeys, PieceDirection.rotatingKeys),
     tickDelay = Seconds(0.1),
     lastUpdated = Seconds.zero,
   )
 
   def updateDirection(
       model: GameModel,
-      lastUpdated: Option[Seconds],
       direction: PieceDirection,
   ): GameModel =
     model.copy(
       currentDirection = direction,
-      lastUpdated = lastUpdated.getOrElse(Seconds.zero),
+      lastUpdated = Seconds.zero,
     )
 
   def updatePiece(

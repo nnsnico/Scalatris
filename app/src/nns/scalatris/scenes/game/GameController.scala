@@ -43,7 +43,6 @@ object GameController:
       Outcome(
         GameModel.updateDirection(
           model = gameModel,
-          lastUpdated = none,
-          direction = gameModel.controlScheme.toPieceDirection(e),
+          direction = gameModel.controlScheme.map(_.toPieceDirection(e)).head,
         ),
       )
