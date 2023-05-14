@@ -5,12 +5,10 @@ import cats.data._
 import cats.syntax.all._
 import indigo.*
 import indigo.shared.*
-import indigoextras.geometry.BoundingBox
-import indigoextras.geometry.Vertex
-import nns.scalatris.GridSquareSize
-import nns.scalatris.ViewConfig
+import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.assets._
 import nns.scalatris.extensions._
+import nns.scalatris.{GridSquareSize, ViewConfig}
 
 import scala.util.Random
 

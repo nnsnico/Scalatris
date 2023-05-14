@@ -5,10 +5,9 @@ import indigo.scenes.*
 import indigo.shared.Outcome
 import indigo.shared.scenegraph.Graphic
 import nns.scalatris.GridSquareSize._
-import nns.scalatris.StartUpData
-import nns.scalatris._
 import nns.scalatris.assets._
 import nns.scalatris.model.GlobalModel
+import nns.scalatris.{StartUpData, _}
 
 object GameScene extends Scene[StartUpData, GlobalModel, ViewModel]:
   type SceneViewModel = Group

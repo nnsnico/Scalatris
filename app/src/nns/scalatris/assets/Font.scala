@@ -10,10 +10,11 @@ object Font extends Assets[Material.ImageEffects]:
 
   override protected[assets] val material = Material.ImageEffects(assetName)
 
-  override protected[assets] def path(baseUrl: String): AssetType = AssetType.Image(
-    assetName,
-    AssetPath(baseUrl + "assets/" + assetName + ".png"),
-  )
+  override protected[assets] def path(baseUrl: String): AssetType =
+    AssetType.Image(
+      assetName,
+      AssetPath(baseUrl + "assets/" + assetName + ".png"),
+    )
 
   private[this] val key: FontKey = FontKey("boxy font")
 

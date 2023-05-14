@@ -1,7 +1,7 @@
 package nns.scalatris.extensions
 
 import indigo.*
-import indigo.shared.{ Startup, Outcome }
+import indigo.shared.{Outcome, Startup}
 
 extension [T](o: Option[T])
 

@@ -3,8 +3,8 @@ package nns.scalatris.assets
 import indigo.*
 import indigo.shared.*
 import indigo.shared.datatypes.Vector2
-import indigo.shared.scenegraph.Graphic
 import indigo.shared.materials.Material.Bitmap
+import indigo.shared.scenegraph.Graphic
 import nns.scalatris.GridSquareSize
 import nns.scalatris.GridSquareSize._
 
@@ -14,10 +14,11 @@ object Block extends Assets[Material.Bitmap]:
 
   override protected[assets] val material = Material.Bitmap(assetName)
 
-  override protected[assets] def path(baseUrl: String): AssetType = AssetType.Image(
-    assetName,
-    AssetPath(baseUrl + "assets/" + assetName + ".png"),
-  )
+  override protected[assets] def path(baseUrl: String): AssetType =
+    AssetType.Image(
+      assetName,
+      AssetPath(baseUrl + "assets/" + assetName + ".png"),
+    )
 
   def materials(size: GridSquareSize): Seq[BlockMaterial] = Seq(
     Blue(size),
@@ -44,9 +45,13 @@ sealed class BaseMaterial(size: GridSquareSize) extends BlockMaterial:
     material = Block.material,
   )
 
-final case class Blue(size: GridSquareSize) extends BaseMaterial(size) with BlockMaterial
+final case class Blue(size: GridSquareSize)
+    extends BaseMaterial(size)
+    with BlockMaterial
 
-final case class Green(size: GridSquareSize) extends BaseMaterial(size) with BlockMaterial:
+final case class Green(size: GridSquareSize)
+    extends BaseMaterial(size)
+    with BlockMaterial:
 
   override val bitmap = super
     .bitmap
@@ -57,7 +62,9 @@ final case class Green(size: GridSquareSize) extends BaseMaterial(size) with Blo
       height = size.toInt,
     )
 
-final case class Red(size: GridSquareSize) extends BaseMaterial(size) with BlockMaterial:
+final case class Red(size: GridSquareSize)
+    extends BaseMaterial(size)
+    with BlockMaterial:
 
   override val bitmap = super
     .bitmap
@@ -68,7 +75,9 @@ final case class Red(size: GridSquareSize) extends BaseMaterial(size) with Block
       height = size.toInt,
     )
 
-final case class Orange(size: GridSquareSize) extends BaseMaterial(size) with BlockMaterial:
+final case class Orange(size: GridSquareSize)
+    extends BaseMaterial(size)
+    with BlockMaterial:
 
   override val bitmap = super
     .bitmap
@@ -79,7 +88,9 @@ final case class Orange(size: GridSquareSize) extends BaseMaterial(size) with Bl
       height = size.toInt,
     )
 
-final case class Purple(size: GridSquareSize) extends BaseMaterial(size) with BlockMaterial:
+final case class Purple(size: GridSquareSize)
+    extends BaseMaterial(size)
+    with BlockMaterial:
 
   override val bitmap = super
     .bitmap
@@ -90,7 +101,9 @@ final case class Purple(size: GridSquareSize) extends BaseMaterial(size) with Bl
       height = size.toInt,
     )
 
-final case class SkyBlue(size: GridSquareSize) extends BaseMaterial(size) with BlockMaterial:
+final case class SkyBlue(size: GridSquareSize)
+    extends BaseMaterial(size)
+    with BlockMaterial:
 
   override val bitmap = super
     .bitmap
@@ -101,7 +114,9 @@ final case class SkyBlue(size: GridSquareSize) extends BaseMaterial(size) with B
       height = size.toInt,
     )
 
-final case class Yellow(size: GridSquareSize) extends BaseMaterial(size) with BlockMaterial:
+final case class Yellow(size: GridSquareSize)
+    extends BaseMaterial(size)
+    with BlockMaterial:
 
   override val bitmap = super
     .bitmap

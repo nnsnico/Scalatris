@@ -1,13 +1,13 @@
 package nns.scalatris
 
+import cats.syntax.all._
 import indigo.*
 import indigo.scenes.*
-import nns.scalatris.model.GlobalModel
-import nns.scalatris.scenes.game.GameScene
-import cats.syntax.all._
-import scala.scalajs.js.annotation.JSExportTopLevel
 import indigo.shared.datatypes.Rectangle
-import nns.scalatris.model.PieceDirection
+import nns.scalatris.model.{GlobalModel, PieceDirection}
+import nns.scalatris.scenes.game.GameScene
+
+import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("IndigoGame")
 object Main extends IndigoGame[ViewConfig, StartUpData, GlobalModel, ViewModel]:

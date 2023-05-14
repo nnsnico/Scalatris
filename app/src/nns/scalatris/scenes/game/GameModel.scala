@@ -1,14 +1,11 @@
 package nns.scalatris.scenes.game
 
 import indigo.*
-import nns.scalatris.model.Piece
+import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.assets.BlockMaterial
-import nns.scalatris.ViewConfig
-import nns.scalatris.GridSquareSize
 import nns.scalatris.model.PieceDirection.ControlScheme
-import nns.scalatris.model.PieceDirection
-import indigoextras.geometry.Vertex
-import indigoextras.geometry.BoundingBox
+import nns.scalatris.model.{Piece, PieceDirection}
+import nns.scalatris.{GridSquareSize, ViewConfig}
 
 final case class GameModel private (
     piece: Option[Piece],

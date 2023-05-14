@@ -1,8 +1,7 @@
 package nns.scalatris
 
 import indigo.*
-import indigoextras.geometry.BoundingBox
-import indigoextras.geometry.Vertex
+import indigoextras.geometry.{BoundingBox, Vertex}
 
 opaque type GridSquareSize = Int
 

@@ -3,12 +3,11 @@ package nns.scalatris.scenes.game
 import cats.syntax.all._
 import indigo.*
 import indigoextras.geometry.Vertex
-import nns.scalatris.GridSquareSize
-import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions._
 import nns.scalatris.model.Piece
 import nns.scalatris.model.PieceDirection._
+import nns.scalatris.{GridSquareSize, ViewConfig}
 
 final case class GameController(gameModel: GameModel)
 

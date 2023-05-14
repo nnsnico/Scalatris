@@ -2,12 +2,9 @@ package nns.scalatris.model
 
 import indigo.*
 import indigo.shared.Outcome
-import nns.scalatris.GridSquareSize
-import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
-import nns.scalatris.scenes.game.GameController
-import nns.scalatris.scenes.game.GameModel
-import nns.scalatris.scenes.game.GameView
+import nns.scalatris.scenes.game.{GameController, GameModel, GameView}
+import nns.scalatris.{GridSquareSize, ViewConfig}
 
 final case class GlobalModel(
     gameController: GameController,

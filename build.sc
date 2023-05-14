@@ -2,10 +2,13 @@ import mill._
 import mill.scalalib._
 import mill.scalajslib._
 import mill.scalajslib.api._
-
+// mill-scalafix
+import $ivy.`com.goyeau::mill-scalafix::0.2.9`
+import com.goyeau.mill.scalafix.ScalafixModule
+// indigo
 import $ivy.`io.indigoengine::mill-indigo:0.14.0`, millindigo._
 
-object app extends ScalaJSModule with MillIndigo {
+object app extends ScalaJSModule with MillIndigo with ScalafixModule {
   def scalaVersion   = "3.2.0"
   def scalaJSVersion = "1.11.0"
 
@@ -51,6 +54,12 @@ object app extends ScalaJSModule with MillIndigo {
     ivy"io.indigoengine::indigo-json-circe::$indigoVersion",
     ivy"org.typelevel::cats-core:$catsVersion",
     ivy"org.typelevel::mouse:$mouseVersion",
+  )
+
+  val scalaFixOrganizeImportsVersion = "0.6.0"
+
+  def scalafixIvyDeps = Agg(
+    ivy"com.github.liancheng::organize-imports:$scalaFixOrganizeImportsVersion",
   )
 
 }

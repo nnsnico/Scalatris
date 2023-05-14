@@ -1,11 +1,11 @@
 package nns.scalatris.scenes.game
 
 import indigo.*
-import nns.scalatris.ViewConfig
-import nns.scalatris.model.{GlobalModel, Piece}
-import nns.scalatris.assets._
-import nns.scalatris.GridSquareSize
 import indigo.logger._
+import nns.scalatris.assets._
+import nns.scalatris.model.{GlobalModel, Piece}
+import nns.scalatris.{GridSquareSize, ViewConfig}
+
 import scala.util.Random
 
 object GameView:
