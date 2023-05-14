@@ -36,7 +36,7 @@ object GameController:
       Outcome(
         GameModel.updatePiece(
           model = gameModel,
-          currentTime = gameTime.running,
+          currentTime = gameTime.running.some,
           stageSize = viewConfig.stageSize,
         ),
       )
@@ -44,6 +44,7 @@ object GameController:
       Outcome(
         GameModel.updateDirection(
           model = gameModel,
+          lastUpdated = none,
           direction = gameModel.controlScheme.toPieceDirection(e),
         ),
       )

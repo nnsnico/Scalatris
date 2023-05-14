@@ -34,16 +34,21 @@ object GameModel:
     lastUpdated = Seconds.zero,
   )
 
-  def updateDirection(model: GameModel, direction: PieceDirection): GameModel =
+  def updateDirection(
+      model: GameModel,
+      lastUpdated: Option[Seconds],
+      direction: PieceDirection,
+  ): GameModel =
     model.copy(
-      currentDirection = direction
+      currentDirection = direction,
+      lastUpdated = lastUpdated.getOrElse(Seconds.zero),
     )
 
   def updatePiece(
       model: GameModel,
-      currentTime: Seconds,
+      currentTime: Option[Seconds],
       stageSize: BoundingBox,
   ): GameModel = model.copy(
     piece = model.piece.map(p => p.update(stageSize, model.currentDirection)),
-    lastUpdated = currentTime,
+    lastUpdated = currentTime.getOrElse(Seconds.zero),
   )
