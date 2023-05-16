@@ -39,7 +39,7 @@ object GameView:
       piece: Piece,
       stageSizeOffSet: Vertex,
   ): Batch[Graphic[_]] = Batch.fromSeq(
-    piece.localPos.map { pos =>
+    piece.current.map { pos =>
       piece
         .material
         .bitmap

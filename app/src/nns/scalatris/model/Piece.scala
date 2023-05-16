@@ -16,38 +16,46 @@ import scala.util.Random
 sealed abstract class Piece(
     val blockSize: GridSquareSize,
     val material: BlockMaterial,
+    val position: Vertex,
     val localPos: Seq[Vertex],
 ):
+
+  def current: Seq[Vertex] = localPos.map(pos =>
+    Vertex(
+      math.ceil(pos.x + position.x + 0.5),
+      math.floor(pos.y + position.y + 0.5),
+    ),
+  )
 
   def update(stageSize: BoundingBox, direction: PieceDirection): Piece =
     direction match
       case PieceDirection.Neutral =>
         this
       case PieceDirection.Down    =>
-        val nextPos = localPos.map(pos => pos + Vertex(0, 1))
+        val nextPos = current.map(pos => pos + Vertex(0, 1))
         Piece.move(
           piece = this,
-          localPos = (nextPos.map(_.y).max < stageSize.height).fold(
-            nextPos,
-            localPos,
+          position = (nextPos.map(_.y).max < stageSize.height).fold(
+            position + Vertex(0, 1),
+            position,
           ),
         )
       case PieceDirection.Left    =>
-        val nextPos = localPos.map(pos => pos - Vertex(1, 0))
+        val nextPos = current.map(pos => pos - Vertex(1, 0))
         Piece.move(
           piece = this,
-          localPos = (nextPos.map(_.x).min >= 0).fold(
-            nextPos,
-            localPos,
+          position = (nextPos.map(_.x).min >= 0).fold(
+            position - Vertex(1, 0),
+            position,
           ),
         )
       case PieceDirection.Right   =>
-        val nextPos = localPos.map(pos => pos + Vertex(1, 0))
+        val nextPos = current.map(pos => pos + Vertex(1, 0))
         Piece.move(
           this,
-          localPos = (nextPos.map(_.x).max < stageSize.width).fold(
-            nextPos,
-            localPos,
+          position = (nextPos.map(_.x).max < stageSize.width).fold(
+            position + Vertex(1, 0),
+            position,
           ),
         )
       case PieceDirection.Up      => Piece.rotate(this)
@@ -55,122 +63,130 @@ sealed abstract class Piece(
 final case class IKind(
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
-      Vertex(0, 0),
-      Vertex(1, 0),
-      Vertex(2, 0),
-      Vertex(3, 0),
+      Vertex(-1.5, 0),
+      Vertex(-0.5, 0),
+      Vertex(0.5, 0),
+      Vertex(1.5, 0),
     ),
-) extends Piece(blockSize, material, localPos)
+) extends Piece(blockSize, material, position, localPos)
 
 final case class JKind(
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
-      Vertex(0, 0),
-      Vertex(0, 1),
-      Vertex(1, 1),
-      Vertex(2, 1),
+      Vertex(-1.0, 0.5),
+      Vertex(0.0, 0.5),
+      Vertex(1.0, 0.5),
+      Vertex(1.0, -0.5),
     ),
-) extends Piece(blockSize, material, localPos)
+) extends Piece(blockSize, material, position, localPos)
 
 final case class LKind(
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
-      Vertex(2, 0),
-      Vertex(0, 1),
-      Vertex(1, 1),
-      Vertex(2, 1),
+      Vertex(-1.0, 0.5),
+      Vertex(0.0, 0.5),
+      Vertex(1.0, 0.5),
+      Vertex(-1.0, -0.5),
     ),
-) extends Piece(blockSize, material, localPos)
+) extends Piece(blockSize, material, position, localPos)
 
 final case class OKind(
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
-      Vertex(0, 0),
-      Vertex(1, 0),
-      Vertex(0, 1),
-      Vertex(1, 1),
+      Vertex(-0.5, 0.5),
+      Vertex(0.5, 0.5),
+      Vertex(-0.5, -0.5),
+      Vertex(0.5, -0.5),
     ),
-) extends Piece(blockSize, material, localPos)
+) extends Piece(blockSize, material, position, localPos)
 
 final case class SKind(
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
-      Vertex(1, 0),
-      Vertex(2, 0),
-      Vertex(0, 1),
-      Vertex(1, 1),
+      Vertex(0.0, 0.5),
+      Vertex(1.0, 0.5),
+      Vertex(-1.0, -0.5),
+      Vertex(0.0, -0.5),
     ),
-) extends Piece(blockSize, material, localPos)
+) extends Piece(blockSize, material, position, localPos)
 
 final case class TKind(
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
-      Vertex(0, 1),
-      Vertex(1, 0),
-      Vertex(1, 1),
-      Vertex(2, 1),
+      Vertex(-1.0, 0.0),
+      Vertex(0.0, 0.0),
+      Vertex(1.0, 0.0),
+      Vertex(0.0, 1.0),
     ),
-) extends Piece(blockSize, material, localPos)
+) extends Piece(blockSize, material, position, localPos)
 
 final case class ZKind(
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
-      Vertex(0, 0),
-      Vertex(1, 0),
-      Vertex(1, 1),
-      Vertex(1, 2),
+      Vertex(-1.0, 0.5),
+      Vertex(0.0, 0.5),
+      Vertex(0.0, -0.5),
+      Vertex(1.0, -0.5),
     ),
-) extends Piece(blockSize, material, localPos)
+) extends Piece(blockSize, material, position, localPos)
 
 object Piece:
 
   def init(blockMaterials: Seq[BlockMaterial]): Option[Piece] =
     for {
       index     <- Some(Random.nextInt(blockMaterials.length))
+      // index     <- Some(5)
       pieceList <- fromBlockMaterial(blockMaterials)
       piece     <- pieceList.get(index)
     } yield piece
 
-  def move(piece: Piece, localPos: Seq[Vertex]): Piece = piece match
+  def move(piece: Piece, position: Vertex): Piece = piece match
     case k: IKind =>
-      k.copy(localPos = localPos)
+      k.copy(position = position)
     case k: JKind =>
-      k.copy(localPos = localPos)
+      k.copy(position = position)
     case k: LKind =>
-      k.copy(localPos = localPos)
+      k.copy(position = position)
     case k: OKind =>
-      k.copy(localPos = localPos)
+      k.copy(position = position)
     case k: SKind =>
-      k.copy(localPos = localPos)
+      k.copy(position = position)
     case k: TKind =>
-      k.copy(localPos = localPos)
+      k.copy(position = position)
     case k: ZKind =>
-      k.copy(localPos = localPos)
+      k.copy(position = position)
 
   def rotate(piece: Piece): Piece = piece match
     case k: IKind =>
-      k.copy(localPos = rotateRight(k.localPos))
+      k.copy(localPos = rotateLeft(k.localPos))
     case k: JKind =>
-      k.copy(localPos = rotateRight(k.localPos))
+      k.copy(localPos = rotateLeft(k.localPos))
     case k: LKind =>
-      k.copy(localPos = rotateRight(k.localPos))
+      k.copy(localPos = rotateLeft(k.localPos))
     case k: OKind =>
-      k.copy(localPos = rotateRight(k.localPos))
+      k.copy(localPos = rotateLeft(k.localPos))
     case k: SKind =>
-      k.copy(localPos = rotateRight(k.localPos))
+      k.copy(localPos = rotateLeft(k.localPos))
     case k: TKind =>
-      k.copy(localPos = rotateRight(k.localPos))
+      k.copy(localPos = rotateLeft(k.localPos))
     case k: ZKind =>
-      k.copy(localPos = rotateRight(k.localPos))
+      k.copy(localPos = rotateLeft(k.localPos))
 
-  private def rotateRight(localPos: Seq[Vertex]): Seq[Vertex] =
+  private def rotateLeft(localPos: Seq[Vertex]): Seq[Vertex] =
     val c = math.cos(-math.Pi / 2.0)
     val s = math.sin(-math.Pi / 2.0)
 
