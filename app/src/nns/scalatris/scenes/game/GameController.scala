@@ -5,8 +5,8 @@ import indigo.*
 import indigoextras.geometry.Vertex
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions._
-import nns.scalatris.model.Piece
 import nns.scalatris.model.PieceDirection._
+import nns.scalatris.model.{Piece, PieceDirection}
 import nns.scalatris.{GridSquareSize, ViewConfig}
 
 final case class GameController(gameModel: GameModel)
@@ -43,6 +43,11 @@ object GameController:
       Outcome(
         GameModel.updateDirection(
           model = gameModel,
-          direction = gameModel.controlScheme.map(_.toPieceDirection(e)).head,
+          direction = gameModel
+            .controlScheme
+            .map(_.toPieceDirection(e))
+            .filter(_ != PieceDirection.Neutral)
+            .headOption
+            .getOrElse(PieceDirection.Neutral)
         ),
       )

@@ -21,9 +21,17 @@ sealed abstract class Piece(
 
   def update(stageSize: BoundingBox, direction: PieceDirection): Piece =
     direction match
-      case PieceDirection.Neutral => this
-      // TODO: down
-      case PieceDirection.Down    => this
+      case PieceDirection.Neutral =>
+        this
+      case PieceDirection.Down    =>
+        val nextPos = localPos.map(pos => pos + Vertex(0, 1))
+        Piece.move(
+          piece = this,
+          localPos = (nextPos.map(_.y).max < stageSize.height).fold(
+            nextPos,
+            localPos,
+          ),
+        )
       case PieceDirection.Left    =>
         val nextPos = localPos.map(pos => pos - Vertex(1, 0))
         Piece.move(

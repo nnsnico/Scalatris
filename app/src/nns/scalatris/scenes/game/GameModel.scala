@@ -23,8 +23,11 @@ object GameModel:
   ): GameModel = GameModel(
     piece = Piece.init(blockMaterials = blockMaterial),
     currentDirection = PieceDirection.Neutral,
-    controlScheme =
-      Seq(PieceDirection.turningKeys, PieceDirection.rotatingKeys),
+    controlScheme = Seq(
+      PieceDirection.turningKeys,
+      PieceDirection.rotatingKeys,
+      PieceDirection.fallingKeys,
+    ),
     tickDelay = Seconds(0.1),
     lastUpdated = Seconds.zero,
   )

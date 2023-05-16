@@ -36,7 +36,7 @@ object ViewConfig:
 
   def default: ViewConfig =
 
-    val gridSize  = BoundingBox(width = 30, height = 20)
+    val gridSize  = BoundingBox(width = 30, height = 30)
     val stageSize = BoundingBox(width = 10, height = 20)
     val viewport = GameViewport(
         ((gridSquareSize * gridSize.width.toInt) * magnificationLevel).toInt,
