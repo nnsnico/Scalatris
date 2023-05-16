@@ -16,16 +16,11 @@ import scala.util.Random
 sealed abstract class Piece(
     val blockSize: GridSquareSize,
     val material: BlockMaterial,
-    val position: Vertex,
-    val localPos: Seq[Vertex],
+    protected val position: Vertex,
+    protected val localPos: Seq[Vertex],
 ):
 
-  def current: Seq[Vertex] = localPos.map(pos =>
-    Vertex(
-      math.ceil(pos.x + position.x + 0.5),
-      math.floor(pos.y + position.y + 0.5),
-    ),
-  )
+  def current: Seq[Vertex] = convertToStagePosition(localPos, position)
 
   def update(stageSize: BoundingBox, direction: PieceDirection): Piece =
     direction match
@@ -58,12 +53,45 @@ sealed abstract class Piece(
             position,
           ),
         )
-      case PieceDirection.Up      => Piece.rotate(this)
+      case PieceDirection.Up      =>
+        val nextPos = convertToStagePosition(rotateLeft, position)
+        Piece.moveByLocalPos(
+          this,
+          localPos = (nextPos.map(_.x).min >= 0 && nextPos
+            .map(_.x)
+            .max < stageSize.width).fold(
+            rotateLeft,
+            localPos,
+          ),
+        )
+
+  private def convertToStagePosition(
+      localPos: Seq[Vertex],
+      position: Vertex,
+  ): Seq[Vertex] =
+    localPos.map(pos =>
+      Vertex(
+        math.ceil(pos.x + position.x + 0.5),
+        math.floor(pos.y + position.y + 0.5),
+      ),
+    )
+
+  private def rotateLeft: Seq[Vertex] =
+    val c = math.cos(-math.Pi / 2.0)
+    val s = math.sin(-math.Pi / 2.0)
+
+    def roundToHalf(v: (Double, Double)): (Double, Double) = v match
+      case (x, y) =>
+        (math.round(x * 2.0) * 0.5, math.round(y * 2.0) * 0.5)
+
+    localPos.map { v =>
+      roundToHalf((v.x * c - v.y * s, v.x * s + v.y * c))
+    }.map { case (x, y) => Vertex(x, y) }
 
 final case class IKind(
     override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
-    override val position: Vertex = Vertex(0, 0),
+    override val position: Vertex = Vertex(1, 0),
     override val localPos: Seq[Vertex] = Seq(
       Vertex(-1.5, 0),
       Vertex(-0.5, 0),
@@ -170,33 +198,21 @@ object Piece:
     case k: ZKind =>
       k.copy(position = position)
 
-  def rotate(piece: Piece): Piece = piece match
+  def moveByLocalPos(piece: Piece, localPos: Seq[Vertex]): Piece = piece match
     case k: IKind =>
-      k.copy(localPos = rotateLeft(k.localPos))
+      k.copy(localPos = localPos)
     case k: JKind =>
-      k.copy(localPos = rotateLeft(k.localPos))
+      k.copy(localPos = localPos)
     case k: LKind =>
-      k.copy(localPos = rotateLeft(k.localPos))
+      k.copy(localPos = localPos)
     case k: OKind =>
-      k.copy(localPos = rotateLeft(k.localPos))
+      k.copy(localPos = localPos)
     case k: SKind =>
-      k.copy(localPos = rotateLeft(k.localPos))
+      k.copy(localPos = localPos)
     case k: TKind =>
-      k.copy(localPos = rotateLeft(k.localPos))
+      k.copy(localPos = localPos)
     case k: ZKind =>
-      k.copy(localPos = rotateLeft(k.localPos))
-
-  private def rotateLeft(localPos: Seq[Vertex]): Seq[Vertex] =
-    val c = math.cos(-math.Pi / 2.0)
-    val s = math.sin(-math.Pi / 2.0)
-
-    def roundToHalf(v: (Double, Double)): (Double, Double) = v match
-      case (x, y) =>
-        (math.round(x * 2.0) * 0.5, math.round(y * 2.0) * 0.5)
-
-    localPos.map { v =>
-      roundToHalf((v.x * c - v.y * s, v.x * s + v.y * c))
-    }.map { case (x, y) => Vertex(x, y) }
+      k.copy(localPos = localPos)
 
   private def fromBlockMaterial(
       blockMaterials: Seq[BlockMaterial],
@@ -242,47 +258,3 @@ object Piece:
           material,
         ).some
       case _                        => none
-
-enum PieceState:
-  case Initialize, Falling, Landed
-
-enum PieceDirection:
-  case Neutral
-  case Left
-  case Right
-  case Up
-  case Down
-
-object PieceDirection:
-
-  enum ControlScheme:
-    case Neutral
-    case Turning(left: Key, right: Key)
-    case Rotating(up: Key)
-    case Falling(down: Key)
-
-  val turningKeys: ControlScheme.Turning =
-    ControlScheme.Turning(Key.KEY_H, Key.KEY_L)
-
-  val rotatingKeys: ControlScheme.Rotating = ControlScheme.Rotating(Key.KEY_K)
-
-  val fallingKeys: ControlScheme.Falling = ControlScheme.Falling(Key.KEY_J)
-
-  extension (cs: ControlScheme)
-
-    def toPieceDirection(keyboardEvent: KeyboardEvent): PieceDirection =
-      (cs, keyboardEvent) match
-        case (ControlScheme.Turning(key, _), KeyboardEvent.KeyDown(code))
-            if code === key =>
-          PieceDirection.Left
-        case (ControlScheme.Turning(_, key), KeyboardEvent.KeyDown(code))
-            if code === key =>
-          PieceDirection.Right
-        case (ControlScheme.Rotating(key), KeyboardEvent.KeyDown(code))
-            if code === key =>
-          PieceDirection.Up
-        case (ControlScheme.Falling(key), KeyboardEvent.KeyDown(code))
-            if code === key =>
-          PieceDirection.Down
-        case _ =>
-          PieceDirection.Neutral
