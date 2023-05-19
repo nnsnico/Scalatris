@@ -48,16 +48,24 @@ object GameModel:
       currentTime: Option[Seconds],
       stageSize: BoundingBox,
   ): GameModel = model.copy(
-    piece = model.piece.map(p => p.update(stageSize, model.currentDirection)),
+    piece = model
+      .piece
+      .map(p =>
+        p.update(
+          stageSize,
+          model.stageMap.flatMap(_.current.toSet),
+          model.currentDirection,
+        ),
+      ),
     lastUpdated = currentTime.getOrElse(Seconds.zero),
   )
 
   def putPieceOnStage(
-    model: GameModel,
-    blockMaterial: Seq[BlockMaterial],
-    putPiece: Piece,
+      model: GameModel,
+      blockMaterial: Seq[BlockMaterial],
+      putPiece: Piece,
   ): GameModel = model.copy(
     piece = Piece.init(blockMaterials = blockMaterial),
     currentDirection = PieceDirection.Neutral,
-    stageMap = model.stageMap + putPiece
+    stageMap = model.stageMap + putPiece,
   )

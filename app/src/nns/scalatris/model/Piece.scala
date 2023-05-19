@@ -22,7 +22,11 @@ sealed abstract class Piece(
 
   def current: Seq[Vertex] = convertToStagePosition(localPos, position)
 
-  def update(stageSize: BoundingBox, direction: PieceDirection): Piece =
+  def update(
+      stageSize: BoundingBox,
+      putPiece: Set[Vertex],
+      direction: PieceDirection,
+  ): Piece =
     direction match
       case PieceDirection.Neutral =>
         this
@@ -30,7 +34,10 @@ sealed abstract class Piece(
         val nextPos = current.map(pos => pos - Vertex(1, 0))
         Piece.move(
           piece = this,
-          position = (nextPos.map(_.x).min >= 0).fold(
+          position = (
+            nextPos.map(_.x).min >= 0 &&
+              (putPiece & nextPos.toSet).isEmpty
+          ).fold(
             position - Vertex(1, 0),
             position,
           ),
@@ -39,7 +46,10 @@ sealed abstract class Piece(
         val nextPos = current.map(pos => pos + Vertex(1, 0))
         Piece.move(
           this,
-          position = (nextPos.map(_.x).max < stageSize.width).fold(
+          position = (
+            nextPos.map(_.x).max < stageSize.width &&
+              (putPiece & nextPos.toSet).isEmpty
+          ).fold(
             position + Vertex(1, 0),
             position,
           ),
@@ -51,7 +61,8 @@ sealed abstract class Piece(
           localPos = (
             nextPos.map(_.x).min >= 0 &&
               nextPos.map(_.x).max < stageSize.width &&
-              nextPos.map(_.y).max < stageSize.height
+              nextPos.map(_.y).max < stageSize.height &&
+              (putPiece & nextPos.toSet).isEmpty
           ).fold(
             rotateLeft,
             localPos,
@@ -59,7 +70,10 @@ sealed abstract class Piece(
         )
       case PieceDirection.Down    =>
         val nextPos = current.map(pos => pos + Vertex(0, 1))
-        (nextPos.map(_.y).max < stageSize.height).fold(
+        (
+          nextPos.map(_.y).max < stageSize.height &&
+            (putPiece & nextPos.toSet).isEmpty
+        ).fold(
           Piece.move(this, position + Vertex(0, 1)),
           Piece.updateState(this, PieceState.Landed),
         )
@@ -174,12 +188,7 @@ final case class ZKind(
 object Piece:
 
   def init(blockMaterials: Seq[BlockMaterial]): Option[Piece] =
-    for {
-      index     <- Some(Random.nextInt(blockMaterials.length))
-      // index     <- Some(5)
-      pieceList <- fromBlockMaterial(blockMaterials)
-      piece     <- pieceList.get(index)
-    } yield piece
+    fromBlockMaterial(blockMaterials).get(Random.nextInt(blockMaterials.length))
 
   def move(piece: Piece, position: Vertex): Piece = piece match
     case k: IKind =>
@@ -229,17 +238,15 @@ object Piece:
     case k: ZKind =>
       k.copy(state = state)
 
-  private def fromBlockMaterial(
-      blockMaterials: Seq[BlockMaterial],
-  ): Option[Seq[Piece]] =
-    blockMaterials.traverse(m => materialToPiece(m))
+  private def fromBlockMaterial(materials: Seq[BlockMaterial]): Seq[Piece] =
+    materials.map(m => materialToPiece(m))
 
-  private def materialToPiece(material: BlockMaterial): Option[Piece] =
+  private def materialToPiece(material: BlockMaterial): Piece =
     material match
-      case material @ Blue(size)    => JKind(material).some
-      case material @ Green(size)   => SKind(material).some
-      case material @ Red(size)     => ZKind(material).some
-      case material @ Orange(size)  => LKind(material).some
-      case material @ Purple(size)  => TKind(material).some
-      case material @ SkyBlue(size) => IKind(material).some
-      case material @ Yellow(size)  => OKind(material).some
+      case m: Blue    => JKind(m)
+      case m: Green   => SKind(m)
+      case m: Red     => ZKind(m)
+      case m: Orange  => LKind(m)
+      case m: Purple  => TKind(m)
+      case m: SkyBlue => IKind(m)
+      case m: Yellow  => OKind(m)
