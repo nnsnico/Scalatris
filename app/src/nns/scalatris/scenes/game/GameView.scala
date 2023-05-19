@@ -44,8 +44,8 @@ object GameView:
         .material
         .bitmap
         .moveTo(
-          x = ((piece.blockSize * pos.x) + stageSizeOffSet.x).toInt,
-          y = ((piece.blockSize * pos.y) + stageSizeOffSet.y).toInt,
+          x = ((piece.material.size * pos.x) + stageSizeOffSet.x).toInt,
+          y = ((piece.material.size * pos.y) + stageSizeOffSet.y).toInt,
         )
     },
   )

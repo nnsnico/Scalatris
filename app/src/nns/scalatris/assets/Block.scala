@@ -31,12 +31,9 @@ object Block extends Assets[Material.Bitmap]:
   )
 
 sealed trait BlockMaterial:
-  def bitmap: Graphic[Material.Bitmap]
-
-sealed class BaseMaterial(size: GridSquareSize) extends BlockMaterial:
   final protected val bitmapSize = 64
-
-  override def bitmap = Graphic[Material.Bitmap](
+  val size: GridSquareSize
+  def bitmap: Graphic[Material.Bitmap] = Graphic[Material.Bitmap](
     x = 0,
     y = 0,
     width = size.toInt,  // same as height
@@ -46,12 +43,10 @@ sealed class BaseMaterial(size: GridSquareSize) extends BlockMaterial:
   )
 
 final case class Blue(size: GridSquareSize)
-    extends BaseMaterial(size)
-    with BlockMaterial
+    extends BlockMaterial
 
 final case class Green(size: GridSquareSize)
-    extends BaseMaterial(size)
-    with BlockMaterial:
+    extends BlockMaterial:
 
   override val bitmap = super
     .bitmap
@@ -63,8 +58,7 @@ final case class Green(size: GridSquareSize)
     )
 
 final case class Red(size: GridSquareSize)
-    extends BaseMaterial(size)
-    with BlockMaterial:
+    extends BlockMaterial:
 
   override val bitmap = super
     .bitmap
@@ -76,8 +70,7 @@ final case class Red(size: GridSquareSize)
     )
 
 final case class Orange(size: GridSquareSize)
-    extends BaseMaterial(size)
-    with BlockMaterial:
+    extends BlockMaterial:
 
   override val bitmap = super
     .bitmap
@@ -89,8 +82,7 @@ final case class Orange(size: GridSquareSize)
     )
 
 final case class Purple(size: GridSquareSize)
-    extends BaseMaterial(size)
-    with BlockMaterial:
+    extends BlockMaterial:
 
   override val bitmap = super
     .bitmap
@@ -102,8 +94,7 @@ final case class Purple(size: GridSquareSize)
     )
 
 final case class SkyBlue(size: GridSquareSize)
-    extends BaseMaterial(size)
-    with BlockMaterial:
+    extends BlockMaterial:
 
   override val bitmap = super
     .bitmap
@@ -115,8 +106,7 @@ final case class SkyBlue(size: GridSquareSize)
     )
 
 final case class Yellow(size: GridSquareSize)
-    extends BaseMaterial(size)
-    with BlockMaterial:
+    extends BlockMaterial:
 
   override val bitmap = super
     .bitmap

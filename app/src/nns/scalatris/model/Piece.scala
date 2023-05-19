@@ -14,8 +14,8 @@ import nns.scalatris.{GridSquareSize, ViewConfig}
 import scala.util.Random
 
 sealed abstract class Piece(
-    val blockSize: GridSquareSize,
     val material: BlockMaterial,
+    val state: PieceState,
     protected val position: Vertex,
     protected val localPos: Seq[Vertex],
 ):
@@ -88,8 +88,8 @@ sealed abstract class Piece(
     }.map { case (x, y) => Vertex(x, y) }
 
 final case class IKind(
-    override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val state: PieceState = PieceState.Falling,
     override val position: Vertex = Vertex(1, 0),
     override val localPos: Seq[Vertex] = Seq(
       Vertex(-1.5, 0),
@@ -97,11 +97,11 @@ final case class IKind(
       Vertex(0.5, 0),
       Vertex(1.5, 0),
     ),
-) extends Piece(blockSize, material, position, localPos)
+) extends Piece(material, state, position, localPos)
 
 final case class JKind(
-    override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val state: PieceState = PieceState.Falling,
     override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
       Vertex(-1.0, 0.5),
@@ -109,11 +109,11 @@ final case class JKind(
       Vertex(1.0, 0.5),
       Vertex(1.0, -0.5),
     ),
-) extends Piece(blockSize, material, position, localPos)
+) extends Piece(material, state, position, localPos)
 
 final case class LKind(
-    override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val state: PieceState = PieceState.Falling,
     override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
       Vertex(-1.0, 0.5),
@@ -121,11 +121,11 @@ final case class LKind(
       Vertex(1.0, 0.5),
       Vertex(-1.0, -0.5),
     ),
-) extends Piece(blockSize, material, position, localPos)
+) extends Piece(material, state, position, localPos)
 
 final case class OKind(
-    override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val state: PieceState = PieceState.Falling,
     override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
       Vertex(-0.5, 0.5),
@@ -133,11 +133,11 @@ final case class OKind(
       Vertex(-0.5, -0.5),
       Vertex(0.5, -0.5),
     ),
-) extends Piece(blockSize, material, position, localPos)
+) extends Piece(material, state, position, localPos)
 
 final case class SKind(
-    override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val state: PieceState = PieceState.Falling,
     override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
       Vertex(0.0, 0.5),
@@ -145,11 +145,11 @@ final case class SKind(
       Vertex(-1.0, -0.5),
       Vertex(0.0, -0.5),
     ),
-) extends Piece(blockSize, material, position, localPos)
+) extends Piece(material, state, position, localPos)
 
 final case class TKind(
-    override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val state: PieceState = PieceState.Falling,
     override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
       Vertex(-1.0, 0.0),
@@ -157,11 +157,11 @@ final case class TKind(
       Vertex(1.0, 0.0),
       Vertex(0.0, 1.0),
     ),
-) extends Piece(blockSize, material, position, localPos)
+) extends Piece(material, state, position, localPos)
 
 final case class ZKind(
-    override val blockSize: GridSquareSize,
     override val material: BlockMaterial,
+    override val state: PieceState = PieceState.Falling,
     override val position: Vertex = Vertex(0, 0),
     override val localPos: Seq[Vertex] = Seq(
       Vertex(-1.0, 0.5),
@@ -169,7 +169,7 @@ final case class ZKind(
       Vertex(0.0, -0.5),
       Vertex(1.0, -0.5),
     ),
-) extends Piece(blockSize, material, position, localPos)
+) extends Piece(material, state, position, localPos)
 
 object Piece:
 
@@ -221,39 +221,10 @@ object Piece:
   private def materialToPiece(material: BlockMaterial): Option[Piece] =
     val initDirection = PieceDirection.Neutral
     material match
-      case material @ Blue(size)    =>
-        JKind(
-          blockSize = size,
-          material,
-        ).some
-      case material @ Green(size)   =>
-        SKind(
-          blockSize = size,
-          material,
-        ).some
-      case material @ Red(size)     =>
-        ZKind(
-          blockSize = size,
-          material,
-        ).some
-      case material @ Orange(size)  =>
-        LKind(
-          blockSize = size,
-          material,
-        ).some
-      case material @ Purple(size)  =>
-        TKind(
-          blockSize = size,
-          material,
-        ).some
-      case material @ SkyBlue(size) =>
-        IKind(
-          blockSize = size,
-          material,
-        ).some
-      case material @ Yellow(size)  =>
-        OKind(
-          blockSize = size,
-          material,
-        ).some
-      case _                        => none
+      case material @ Blue(size)    => JKind(material).some
+      case material @ Green(size)   => SKind(material).some
+      case material @ Red(size)     => ZKind(material).some
+      case material @ Orange(size)  => LKind(material).some
+      case material @ Purple(size)  => TKind(material).some
+      case material @ SkyBlue(size) => IKind(material).some
+      case material @ Yellow(size)  => OKind(material).some
