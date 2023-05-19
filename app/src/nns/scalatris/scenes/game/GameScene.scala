@@ -34,9 +34,10 @@ object GameScene extends Scene[StartUpData, GlobalModel, ViewModel]:
       model: GameModel,
   ): GlobalEvent => Outcome[GameModel] =
     GameController.handleEvent(
-      model,
-      context.gameTime,
-      context.startUpData.viewConfig,
+      gameModel = model,
+      gameTime = context.gameTime,
+      blockMaterial = context.startUpData.staticAssets.blockMaterial,
+      viewConfig = context.startUpData.viewConfig,
     )
 
   override def updateViewModel(

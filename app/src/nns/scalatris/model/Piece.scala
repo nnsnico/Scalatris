@@ -213,13 +213,28 @@ object Piece:
     case k: ZKind =>
       k.copy(localPos = localPos)
 
+  def updateState(piece: Piece, state: PieceState): Piece = piece match
+    case k: IKind =>
+      k.copy(state = state)
+    case k: JKind =>
+      k.copy(state = state)
+    case k: LKind =>
+      k.copy(state = state)
+    case k: OKind =>
+      k.copy(state = state)
+    case k: SKind =>
+      k.copy(state = state)
+    case k: TKind =>
+      k.copy(state = state)
+    case k: ZKind =>
+      k.copy(state = state)
+
   private def fromBlockMaterial(
       blockMaterials: Seq[BlockMaterial],
   ): Option[Seq[Piece]] =
     blockMaterials.traverse(m => materialToPiece(m))
 
   private def materialToPiece(material: BlockMaterial): Option[Piece] =
-    val initDirection = PieceDirection.Neutral
     material match
       case material @ Blue(size)    => JKind(material).some
       case material @ Green(size)   => SKind(material).some

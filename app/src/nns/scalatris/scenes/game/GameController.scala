@@ -3,11 +3,11 @@ package nns.scalatris.scenes.game
 import cats.syntax.all._
 import indigo.*
 import indigoextras.geometry.Vertex
+import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions._
 import nns.scalatris.model.PieceDirection._
-import nns.scalatris.model.{Piece, PieceDirection}
-import nns.scalatris.{GridSquareSize, ViewConfig}
+import nns.scalatris.model.{Piece, PieceDirection, PieceState}
 
 final case class GameController(gameModel: GameModel)
 
@@ -26,19 +26,28 @@ object GameController:
   def handleEvent(
       gameModel: GameModel,
       gameTime: GameTime,
+      blockMaterial: Seq[BlockMaterial],
       viewConfig: ViewConfig,
   ): GlobalEvent => Outcome[GameModel] =
     case FrameTick
         if gameTime.running < gameModel.lastUpdated + gameModel.tickDelay =>
       Outcome(gameModel)
     case FrameTick        =>
-      Outcome(
-        GameModel.updatePiece(
-          model = gameModel,
-          currentTime = gameTime.running.some,
-          stageSize = viewConfig.stageSize,
-        ),
-      )
+      gameModel
+        .piece
+        .map(p =>
+          p.state match {
+            case PieceState.Falling =>
+              GameModel.updatePiece(
+                model = gameModel,
+                currentTime = gameTime.running.some,
+                stageSize = viewConfig.stageSize,
+              )
+            case PieceState.Landed  =>
+              GameModel.putPieceOnStage(gameModel, blockMaterial, p)
+          },
+        )
+        .toOutcome
     case e: KeyboardEvent =>
       Outcome(
         GameModel.updateDirection(
@@ -48,6 +57,6 @@ object GameController:
             .map(_.toPieceDirection(e))
             .filter(_ != PieceDirection.Neutral)
             .headOption
-            .getOrElse(PieceDirection.Neutral)
+            .getOrElse(PieceDirection.Neutral),
         ),
       )

@@ -30,7 +30,11 @@ object GameView:
                   stageSizeOffSet = viewConfig.stageSize.position,
                 ),
               )
-              .orNull,
+              .orNull ++ Batch.fromSet(
+              model
+                .stageMap
+                .flatMap(p => drawPiece(p, viewConfig.stageSize.position).toSet),
+            ),
           ),
         ),
     )
