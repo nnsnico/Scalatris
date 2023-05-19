@@ -26,15 +26,6 @@ sealed abstract class Piece(
     direction match
       case PieceDirection.Neutral =>
         this
-      case PieceDirection.Down    =>
-        val nextPos = current.map(pos => pos + Vertex(0, 1))
-        Piece.move(
-          piece = this,
-          position = (nextPos.map(_.y).max < stageSize.height).fold(
-            position + Vertex(0, 1),
-            position,
-          ),
-        )
       case PieceDirection.Left    =>
         val nextPos = current.map(pos => pos - Vertex(1, 0))
         Piece.move(
@@ -57,12 +48,20 @@ sealed abstract class Piece(
         val nextPos = convertToStagePosition(rotateLeft, position)
         Piece.moveByLocalPos(
           this,
-          localPos = (nextPos.map(_.x).min >= 0 && nextPos
-            .map(_.x)
-            .max < stageSize.width).fold(
+          localPos = (
+            nextPos.map(_.x).min >= 0 &&
+              nextPos.map(_.x).max < stageSize.width &&
+              nextPos.map(_.y).max < stageSize.height
+          ).fold(
             rotateLeft,
             localPos,
           ),
+        )
+      case PieceDirection.Down    =>
+        val nextPos = current.map(pos => pos + Vertex(0, 1))
+        (nextPos.map(_.y).max < stageSize.height).fold(
+          Piece.move(this, position + Vertex(0, 1)),
+          Piece.updateState(this, PieceState.Landed),
         )
 
   private def convertToStagePosition(
