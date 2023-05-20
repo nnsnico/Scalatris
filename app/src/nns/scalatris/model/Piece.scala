@@ -20,11 +20,11 @@ sealed abstract class Piece(
     protected val localPos: Seq[Vertex],
 ):
 
-  def current: Seq[Vertex] = convertToStagePosition(localPos, position)
+  def current: Seq[Vertex] = localPos.map(convertToStagePosition(_, position))
 
-  def update(
+  def updatePosition(
       stageSize: BoundingBox,
-      putPiece: Set[Vertex],
+      placedPieces: Set[Vertex],
       direction: PieceDirection,
   ): Piece =
     direction match
@@ -36,7 +36,7 @@ sealed abstract class Piece(
           piece = this,
           position = (
             nextPos.map(_.x).min >= 0 &&
-              (putPiece & nextPos.toSet).isEmpty
+              validateBlocks(placedPieces, nextPos)
           ).fold(
             position - Vertex(1, 0),
             position,
@@ -48,21 +48,21 @@ sealed abstract class Piece(
           this,
           position = (
             nextPos.map(_.x).max < stageSize.width &&
-              (putPiece & nextPos.toSet).isEmpty
+              validateBlocks(placedPieces, nextPos)
           ).fold(
             position + Vertex(1, 0),
             position,
           ),
         )
       case PieceDirection.Up      =>
-        val nextPos = convertToStagePosition(rotateLeft, position)
+        val nextPos = rotateLeft.map(convertToStagePosition(_, position))
         Piece.moveByLocalPos(
           this,
           localPos = (
             nextPos.map(_.x).min >= 0 &&
               nextPos.map(_.x).max < stageSize.width &&
               nextPos.map(_.y).max < stageSize.height &&
-              (putPiece & nextPos.toSet).isEmpty
+              validateBlocks(placedPieces, nextPos)
           ).fold(
             rotateLeft,
             localPos,
@@ -72,22 +72,44 @@ sealed abstract class Piece(
         val nextPos = current.map(pos => pos + Vertex(0, 1))
         (
           nextPos.map(_.y).max < stageSize.height &&
-            (putPiece & nextPos.toSet).isEmpty
+            validateBlocks(placedPieces, nextPos)
         ).fold(
           Piece.move(this, position + Vertex(0, 1)),
           Piece.updateState(this, PieceState.Landed),
         )
 
-  private def convertToStagePosition(
-      localPos: Seq[Vertex],
-      position: Vertex,
-  ): Seq[Vertex] =
-    localPos.map(pos =>
-      Vertex(
-        math.ceil(pos.x + position.x + 0.5),
-        math.floor(pos.y + position.y + 0.5),
+  def removeBlock(position: Seq[Vertex]): Piece =
+    Piece.moveByLocalPos(
+      this,
+      localPos = localPos.filter(v =>
+        !position.contains(convertToStagePosition(v, this.position)),
       ),
     )
+
+  // def shiftBlcokToDown(from: Double, count: Int): Piece =
+  //   Piece.moveByLocalPos(
+  //     this,
+  //     localPos = localPos.map(v =>
+  //       (convertToStagePosition(v, position).y < from).fold(
+  //         v + Vertex(
+  //           0,
+  //           (0.5 * (from - convertToStagePosition(v, position).y)),
+  //         ),
+  //         v,
+  //       ),
+  //     ),
+  //   )
+
+  private def validateBlocks(placedPieces: Set[Vertex], nextPos: Seq[Vertex]) =
+    (placedPieces & nextPos.toSet).isEmpty
+
+  private def convertToStagePosition(
+      localPos: Vertex,
+      position: Vertex,
+  ): Vertex = Vertex(
+    math.ceil(localPos.x + position.x + 0.5),
+    math.floor(localPos.y + position.y + 0.5),
+  )
 
   private def rotateLeft: Seq[Vertex] =
     val c = math.cos(-math.Pi / 2.0)
@@ -101,91 +123,91 @@ sealed abstract class Piece(
       roundToHalf((v.x * c - v.y * s, v.x * s + v.y * c))
     }.map { case (x, y) => Vertex(x, y) }
 
-final case class IKind(
-    override val material: BlockMaterial,
-    override val state: PieceState = PieceState.Falling,
-    override val position: Vertex = Vertex(1, 0),
-    override val localPos: Seq[Vertex] = Seq(
-      Vertex(-1.5, 0),
-      Vertex(-0.5, 0),
-      Vertex(0.5, 0),
-      Vertex(1.5, 0),
-    ),
-) extends Piece(material, state, position, localPos)
-
-final case class JKind(
-    override val material: BlockMaterial,
-    override val state: PieceState = PieceState.Falling,
-    override val position: Vertex = Vertex(0, 0),
-    override val localPos: Seq[Vertex] = Seq(
-      Vertex(-1.0, 0.5),
-      Vertex(0.0, 0.5),
-      Vertex(1.0, 0.5),
-      Vertex(1.0, -0.5),
-    ),
-) extends Piece(material, state, position, localPos)
-
-final case class LKind(
-    override val material: BlockMaterial,
-    override val state: PieceState = PieceState.Falling,
-    override val position: Vertex = Vertex(0, 0),
-    override val localPos: Seq[Vertex] = Seq(
-      Vertex(-1.0, 0.5),
-      Vertex(0.0, 0.5),
-      Vertex(1.0, 0.5),
-      Vertex(-1.0, -0.5),
-    ),
-) extends Piece(material, state, position, localPos)
-
-final case class OKind(
-    override val material: BlockMaterial,
-    override val state: PieceState = PieceState.Falling,
-    override val position: Vertex = Vertex(0, 0),
-    override val localPos: Seq[Vertex] = Seq(
-      Vertex(-0.5, 0.5),
-      Vertex(0.5, 0.5),
-      Vertex(-0.5, -0.5),
-      Vertex(0.5, -0.5),
-    ),
-) extends Piece(material, state, position, localPos)
-
-final case class SKind(
-    override val material: BlockMaterial,
-    override val state: PieceState = PieceState.Falling,
-    override val position: Vertex = Vertex(0, 0),
-    override val localPos: Seq[Vertex] = Seq(
-      Vertex(0.0, 0.5),
-      Vertex(1.0, 0.5),
-      Vertex(-1.0, -0.5),
-      Vertex(0.0, -0.5),
-    ),
-) extends Piece(material, state, position, localPos)
-
-final case class TKind(
-    override val material: BlockMaterial,
-    override val state: PieceState = PieceState.Falling,
-    override val position: Vertex = Vertex(0, 0),
-    override val localPos: Seq[Vertex] = Seq(
-      Vertex(-1.0, 0.0),
-      Vertex(0.0, 0.0),
-      Vertex(1.0, 0.0),
-      Vertex(0.0, 1.0),
-    ),
-) extends Piece(material, state, position, localPos)
-
-final case class ZKind(
-    override val material: BlockMaterial,
-    override val state: PieceState = PieceState.Falling,
-    override val position: Vertex = Vertex(0, 0),
-    override val localPos: Seq[Vertex] = Seq(
-      Vertex(-1.0, 0.5),
-      Vertex(0.0, 0.5),
-      Vertex(0.0, -0.5),
-      Vertex(1.0, -0.5),
-    ),
-) extends Piece(material, state, position, localPos)
-
 object Piece:
+
+  final case class IKind(
+      override val material: BlockMaterial,
+      override val state: PieceState = PieceState.Falling,
+      override val position: Vertex = Vertex(1, 0),
+      override val localPos: Seq[Vertex] = Seq(
+        Vertex(-1.5, 0),
+        Vertex(-0.5, 0),
+        Vertex(0.5, 0),
+        Vertex(1.5, 0),
+      ),
+  ) extends Piece(material, state, position, localPos)
+
+  final case class JKind(
+      override val material: BlockMaterial,
+      override val state: PieceState = PieceState.Falling,
+      override val position: Vertex = Vertex(0, 0),
+      override val localPos: Seq[Vertex] = Seq(
+        Vertex(-1.0, 0.5),
+        Vertex(0.0, 0.5),
+        Vertex(1.0, 0.5),
+        Vertex(1.0, -0.5),
+      ),
+  ) extends Piece(material, state, position, localPos)
+
+  final case class LKind(
+      override val material: BlockMaterial,
+      override val state: PieceState = PieceState.Falling,
+      override val position: Vertex = Vertex(0, 0),
+      override val localPos: Seq[Vertex] = Seq(
+        Vertex(-1.0, 0.5),
+        Vertex(0.0, 0.5),
+        Vertex(1.0, 0.5),
+        Vertex(-1.0, -0.5),
+      ),
+  ) extends Piece(material, state, position, localPos)
+
+  final case class OKind(
+      override val material: BlockMaterial,
+      override val state: PieceState = PieceState.Falling,
+      override val position: Vertex = Vertex(0, 0),
+      override val localPos: Seq[Vertex] = Seq(
+        Vertex(-0.5, 0.5),
+        Vertex(0.5, 0.5),
+        Vertex(-0.5, -0.5),
+        Vertex(0.5, -0.5),
+      ),
+  ) extends Piece(material, state, position, localPos)
+
+  final case class SKind(
+      override val material: BlockMaterial,
+      override val state: PieceState = PieceState.Falling,
+      override val position: Vertex = Vertex(0, 0),
+      override val localPos: Seq[Vertex] = Seq(
+        Vertex(0.0, 0.5),
+        Vertex(1.0, 0.5),
+        Vertex(-1.0, -0.5),
+        Vertex(0.0, -0.5),
+      ),
+  ) extends Piece(material, state, position, localPos)
+
+  final case class TKind(
+      override val material: BlockMaterial,
+      override val state: PieceState = PieceState.Falling,
+      override val position: Vertex = Vertex(0, 0),
+      override val localPos: Seq[Vertex] = Seq(
+        Vertex(-1.0, 0.0),
+        Vertex(0.0, 0.0),
+        Vertex(1.0, 0.0),
+        Vertex(0.0, 1.0),
+      ),
+  ) extends Piece(material, state, position, localPos)
+
+  final case class ZKind(
+      override val material: BlockMaterial,
+      override val state: PieceState = PieceState.Falling,
+      override val position: Vertex = Vertex(0, 0),
+      override val localPos: Seq[Vertex] = Seq(
+        Vertex(-1.0, 0.5),
+        Vertex(0.0, 0.5),
+        Vertex(0.0, -0.5),
+        Vertex(1.0, -0.5),
+      ),
+  ) extends Piece(material, state, position, localPos)
 
   def init(blockMaterials: Seq[BlockMaterial]): Option[Piece] =
     fromBlockMaterial(blockMaterials).get(Random.nextInt(blockMaterials.length))

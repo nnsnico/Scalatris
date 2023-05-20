@@ -62,4 +62,12 @@ object app extends ScalaJSModule with MillIndigo with ScalafixModule {
     ivy"com.github.liancheng::organize-imports:$scalaFixOrganizeImportsVersion",
   )
 
+  object test extends Tests with TestModule.Munit {
+    val munitVersion = "0.7.29"
+
+    def ivyDeps = Agg(
+      ivy"org.scalameta::munit::$munitVersion"
+    )
+  }
+
 }

@@ -2,10 +2,12 @@ package nns.scalatris.scenes.game
 
 import indigo.*
 import indigoextras.geometry.{BoundingBox, Vertex}
+import indigo.logger._
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.model.PieceDirection.ControlScheme
 import nns.scalatris.model.{Piece, PieceDirection}
 import nns.scalatris.{GridSquareSize, ViewConfig}
+import nns.scalatris.extensions.fold
 
 final case class GameModel private (
     piece: Option[Piece],
@@ -51,7 +53,7 @@ object GameModel:
     piece = model
       .piece
       .map(p =>
-        p.update(
+        p.updatePosition(
           stageSize,
           model.stageMap.flatMap(_.current.toSet),
           model.currentDirection,
@@ -62,10 +64,42 @@ object GameModel:
 
   def putPieceOnStage(
       model: GameModel,
+      stageSize: BoundingBox,
       blockMaterial: Seq[BlockMaterial],
       putPiece: Piece,
   ): GameModel = model.copy(
     piece = Piece.init(blockMaterials = blockMaterial),
     currentDirection = PieceDirection.Neutral,
-    stageMap = model.stageMap + putPiece,
+    stageMap = {
+      val nextMap                = model.stageMap + putPiece
+      val filteredFillPositionY  =
+        filterFilledPositionY(nextMap, stageSize.width)
+      val removableBlockPosition =
+        (p: Piece) => p.current.filter(v => filteredFillPositionY.contains(v.y))
+
+      nextMap.map(p =>
+        removableBlockPosition(p)
+          .isEmpty
+          .fold(
+            p,
+            p.removeBlock(removableBlockPosition(p))
+              // .shiftBlcokToDown(
+              //   filteredFillPositionY.max,
+              //   filteredFillPositionY.size,
+              // ),
+          ),
+      )
+    },
   )
+
+  def filterFilledPositionY(
+      map: Set[Piece],
+      stageWidth: Double,
+  ): Set[Double] = map
+    .flatMap(_.current)
+    .groupMapReduce(_.y)(_.x)(_ + _)
+    .filter(_._2 == factorialWidth(stageWidth))
+    .keySet
+
+  def factorialWidth(stageWidth: Double): Int =
+    (0 to stageWidth.toInt - 1).reduce(_ + _)

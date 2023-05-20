@@ -8,6 +8,7 @@ import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions._
 import nns.scalatris.model.PieceDirection._
 import nns.scalatris.model.{Piece, PieceDirection, PieceState}
+import indigoextras.geometry.BoundingBox
 
 final case class GameController(gameModel: GameModel)
 
@@ -44,7 +45,12 @@ object GameController:
                 stageSize = viewConfig.stageSize,
               )
             case PieceState.Landed  =>
-              GameModel.putPieceOnStage(gameModel, blockMaterial, p)
+              GameModel.putPieceOnStage(
+                gameModel,
+                viewConfig.stageSize,
+                blockMaterial,
+                p,
+              )
           },
         )
         .toOutcome
