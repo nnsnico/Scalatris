@@ -61,8 +61,7 @@ object GameController:
           direction = gameModel
             .controlScheme
             .map(_.toPieceDirection(e))
-            .filter(_ != PieceDirection.Neutral)
-            .headOption
+            .find(_ != PieceDirection.Neutral)
             .getOrElse(PieceDirection.Neutral),
         ),
       )
