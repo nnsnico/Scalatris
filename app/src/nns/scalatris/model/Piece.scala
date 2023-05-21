@@ -90,12 +90,15 @@ sealed abstract class Piece(
     Piece.moveByLocalPos(
       this,
       localPos = localPos.map(v =>
-        (convertToStagePosition(v, position).y < filledPositionY
-          .maxOption
-          .getOrElse(0.0)).fold(
-          v + Vertex(0, filledPositionY.size),
-          v,
-        ),
+        filledPositionY
+          .toSeq
+          .sorted
+          .foldLeft(v)((z, posY) =>
+            (convertToStagePosition(v, position).y < posY).fold(
+              z + Vertex(0, 1),
+              z,
+            ),
+          ),
       ),
     )
 
