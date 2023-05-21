@@ -94,9 +94,9 @@ object GameModel:
       stageWidth: Double,
   ): Set[Double] = map
     .flatMap(_.current)
-    .groupMapReduce(_.y)(_.x)(_ + _)
+    .groupMapReduce(_.y)(_.x + 1)(_ + _)
     .filter(_._2 == factorialWidth(stageWidth))
     .keySet
 
   def factorialWidth(stageWidth: Double): Int =
-    (0 to stageWidth.toInt - 1).reduce(_ + _)
+    (1 to stageWidth.toInt).reduce(_ + _)
