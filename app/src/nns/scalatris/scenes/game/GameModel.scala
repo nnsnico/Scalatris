@@ -77,18 +77,15 @@ object GameModel:
       val removableBlockPosition =
         (p: Piece) => p.current.filter(v => filteredFillPositionY.contains(v.y))
 
-      nextMap.map(p =>
-        removableBlockPosition(p)
-          .isEmpty
-          .fold(
-            p,
-            p.removeBlock(removableBlockPosition(p))
-              // .shiftBlcokToDown(
-              //   filteredFillPositionY.max,
-              //   filteredFillPositionY.size,
-              // ),
-          ),
-      )
+      nextMap
+        .map(p =>
+          removableBlockPosition(p)
+            .isEmpty
+            .fold(p, p.removeBlock(removableBlockPosition(p))),
+        )
+        .map(p =>
+          p.shiftBlcokToDown(filteredFillPositionY),
+        )
     },
   )
 

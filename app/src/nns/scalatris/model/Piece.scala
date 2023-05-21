@@ -86,19 +86,18 @@ sealed abstract class Piece(
       ),
     )
 
-  // def shiftBlcokToDown(from: Double, count: Int): Piece =
-  //   Piece.moveByLocalPos(
-  //     this,
-  //     localPos = localPos.map(v =>
-  //       (convertToStagePosition(v, position).y < from).fold(
-  //         v + Vertex(
-  //           0,
-  //           (0.5 * (from - convertToStagePosition(v, position).y)),
-  //         ),
-  //         v,
-  //       ),
-  //     ),
-  //   )
+  def shiftBlcokToDown(filledPositionY: Set[Double]): Piece =
+    Piece.moveByLocalPos(
+      this,
+      localPos = localPos.map(v =>
+        (convertToStagePosition(v, position).y < filledPositionY
+          .maxOption
+          .getOrElse(0.0)).fold(
+          v + Vertex(0, filledPositionY.size),
+          v,
+        ),
+      ),
+    )
 
   private def validateBlocks(placedPieces: Set[Vertex], nextPos: Seq[Vertex]) =
     (placedPieces & nextPos.toSet).isEmpty
