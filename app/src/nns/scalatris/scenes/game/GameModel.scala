@@ -15,7 +15,9 @@ final case class GameModel private (
     currentDirection: PieceDirection,
     controlScheme: Seq[ControlScheme],
     tickDelay: Seconds,
+    tickPieceDown: Seconds,
     lastUpdated: Seconds,
+    lastUpdatedPieceDown: Seconds,
 )
 
 object GameModel:
@@ -33,16 +35,19 @@ object GameModel:
       PieceDirection.fallingKeys,
     ),
     tickDelay = Seconds(0.1),
+    tickPieceDown = Seconds(1.0),
     lastUpdated = Seconds.zero,
+    lastUpdatedPieceDown = Seconds.zero,
   )
 
   def updateDirection(
       model: GameModel,
       direction: PieceDirection,
+      lastUpdated: Seconds = Seconds.zero,
   ): GameModel =
     model.copy(
       currentDirection = direction,
-      lastUpdated = Seconds.zero,
+      lastUpdated = lastUpdated,
     )
 
   def updatePiece(
@@ -53,13 +58,29 @@ object GameModel:
     piece = model
       .piece
       .map(p =>
-        p.updatePosition(
+        p.updatePositionByDirection(
           stageSize,
           model.stageMap.flatMap(_.current.toSet),
           model.currentDirection,
         ),
       ),
     lastUpdated = currentTime.getOrElse(Seconds.zero),
+  )
+
+  def updatePieceSoon(
+      model: GameModel,
+      currentTime: Seconds,
+      stageSize: BoundingBox,
+  ): GameModel = model.copy(
+    piece = model
+      .piece
+      .map(p =>
+        p.downPosition(
+          stageSize = stageSize,
+          placedPieces = model.stageMap.flatMap(_.current.toSet),
+        ),
+      ),
+    lastUpdatedPieceDown = currentTime,
   )
 
   def putPieceOnStage(
@@ -83,9 +104,7 @@ object GameModel:
             .isEmpty
             .fold(p, p.removeBlock(removableBlockPosition(p))),
         )
-        .map(p =>
-          p.shiftBlcokToDown(filteredFillPositionY),
-        )
+        .map(p => p.shiftBlocksToDown(filteredFillPositionY))
     },
   )
 

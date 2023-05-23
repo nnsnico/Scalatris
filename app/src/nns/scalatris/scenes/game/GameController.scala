@@ -2,13 +2,12 @@ package nns.scalatris.scenes.game
 
 import cats.syntax.all._
 import indigo.*
-import indigoextras.geometry.Vertex
+import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions._
 import nns.scalatris.model.PieceDirection._
 import nns.scalatris.model.{Piece, PieceDirection, PieceState}
-import indigoextras.geometry.BoundingBox
 
 final case class GameController(gameModel: GameModel)
 
@@ -33,6 +32,15 @@ object GameController:
     case FrameTick
         if gameTime.running < gameModel.lastUpdated + gameModel.tickDelay =>
       Outcome(gameModel)
+    case FrameTick
+        if gameTime.running >= gameModel.lastUpdatedPieceDown + gameModel.tickPieceDown =>
+      Outcome(
+        GameModel.updatePieceSoon(
+          model = gameModel,
+          currentTime = gameTime.running,
+          stageSize = viewConfig.stageSize,
+        ),
+      )
     case FrameTick        =>
       gameModel
         .piece

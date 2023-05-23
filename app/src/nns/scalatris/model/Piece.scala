@@ -22,7 +22,20 @@ sealed abstract class Piece(
 
   def current: Seq[Vertex] = localPos.map(convertToStagePosition(_, position))
 
-  def updatePosition(
+  def downPosition(
+    stageSize: BoundingBox,
+    placedPieces: Set[Vertex],
+  ): Piece =
+    val nextPos = current.map(pos => pos + Vertex(0, 1))
+    (
+      nextPos.map(_.y).max < stageSize.height &&
+        validateBlocks(placedPieces, nextPos)
+    ).fold(
+      Piece.move(this, position + Vertex(0, 1)),
+      Piece.updateState(this, PieceState.Landed),
+    )
+
+  def updatePositionByDirection(
       stageSize: BoundingBox,
       placedPieces: Set[Vertex],
       direction: PieceDirection,
@@ -69,14 +82,7 @@ sealed abstract class Piece(
           ),
         )
       case PieceDirection.Down    =>
-        val nextPos = current.map(pos => pos + Vertex(0, 1))
-        (
-          nextPos.map(_.y).max < stageSize.height &&
-            validateBlocks(placedPieces, nextPos)
-        ).fold(
-          Piece.move(this, position + Vertex(0, 1)),
-          Piece.updateState(this, PieceState.Landed),
-        )
+        downPosition(stageSize, placedPieces)
 
   def removeBlock(position: Seq[Vertex]): Piece =
     Piece.moveByLocalPos(
@@ -86,7 +92,7 @@ sealed abstract class Piece(
       ),
     )
 
-  def shiftBlcokToDown(filledPositionY: Set[Double]): Piece =
+  def shiftBlocksToDown(filledPositionY: Set[Double]): Piece =
     Piece.moveByLocalPos(
       this,
       localPos = localPos.map(v =>
