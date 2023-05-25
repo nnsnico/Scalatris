@@ -7,13 +7,13 @@ import indigo.*
 import indigo.shared.*
 import indigo.shared.events.KeyboardEvent
 import indigoextras.geometry.{BoundingBox, Vertex}
-import nns.scalatris.assets._
+import nns.scalatris.assets.{Block, BlockMaterial}
 import nns.scalatris.extensions._
 import nns.scalatris.{GridSquareSize, ViewConfig}
 
 import scala.util.Random
 
-sealed abstract class Piece(
+final case class Piece(
     val material: BlockMaterial,
     val state: PieceState,
     protected val position: Vertex,
@@ -23,16 +23,16 @@ sealed abstract class Piece(
   def current: Seq[Vertex] = localPos.map(convertToStagePosition(_, position))
 
   def downPosition(
-    stageSize: BoundingBox,
-    placedPieces: Set[Vertex],
+      stageSize: BoundingBox,
+      placedPieces: Set[Vertex],
   ): Piece =
     val nextPos = current.map(pos => pos + Vertex(0, 1))
     (
       nextPos.map(_.y).max < stageSize.height &&
         validateBlocks(placedPieces, nextPos)
     ).fold(
-      Piece.move(this, position + Vertex(0, 1)),
-      Piece.updateState(this, PieceState.Landed),
+      copy(position = position + Vertex(0, 1)),
+      copy(state = PieceState.Landed),
     )
 
   def updatePositionByDirection(
@@ -45,8 +45,7 @@ sealed abstract class Piece(
         this
       case PieceDirection.Left    =>
         val nextPos = current.map(pos => pos - Vertex(1, 0))
-        Piece.move(
-          piece = this,
+        copy(
           position = (
             nextPos.map(_.x).min >= 0 &&
               validateBlocks(placedPieces, nextPos)
@@ -57,8 +56,7 @@ sealed abstract class Piece(
         )
       case PieceDirection.Right   =>
         val nextPos = current.map(pos => pos + Vertex(1, 0))
-        Piece.move(
-          this,
+        copy(
           position = (
             nextPos.map(_.x).max < stageSize.width &&
               validateBlocks(placedPieces, nextPos)
@@ -69,9 +67,8 @@ sealed abstract class Piece(
         )
       case PieceDirection.Up      =>
         val nextPos = rotateLeft.map(convertToStagePosition(_, position))
-        Piece.moveByLocalPos(
-          this,
-          localPos = (
+        this.copy(localPos =
+          (
             nextPos.map(_.x).min >= 0 &&
               nextPos.map(_.x).max < stageSize.width &&
               nextPos.map(_.y).max < stageSize.height &&
@@ -85,16 +82,14 @@ sealed abstract class Piece(
         downPosition(stageSize, placedPieces)
 
   def removeBlock(position: Seq[Vertex]): Piece =
-    Piece.moveByLocalPos(
-      this,
+    copy(
       localPos = localPos.filter(v =>
         !position.contains(convertToStagePosition(v, this.position)),
       ),
     )
 
   def shiftBlocksToDown(filledPositionY: Set[Double]): Piece =
-    Piece.moveByLocalPos(
-      this,
+    copy(
       localPos = localPos.map(v =>
         filledPositionY
           .toSeq
@@ -133,150 +128,164 @@ sealed abstract class Piece(
 
 object Piece:
 
-  final case class IKind(
-      override val material: BlockMaterial,
-      override val state: PieceState = PieceState.Falling,
-      override val position: Vertex = Vertex(1, 0),
-      override val localPos: Seq[Vertex] = Seq(
-        Vertex(-1.5, 0),
-        Vertex(-0.5, 0),
-        Vertex(0.5, 0),
-        Vertex(1.5, 0),
-      ),
-  ) extends Piece(material, state, position, localPos)
-
-  final case class JKind(
-      override val material: BlockMaterial,
-      override val state: PieceState = PieceState.Falling,
-      override val position: Vertex = Vertex(0, 0),
-      override val localPos: Seq[Vertex] = Seq(
-        Vertex(-1.0, 0.5),
-        Vertex(0.0, 0.5),
-        Vertex(1.0, 0.5),
-        Vertex(1.0, -0.5),
-      ),
-  ) extends Piece(material, state, position, localPos)
-
-  final case class LKind(
-      override val material: BlockMaterial,
-      override val state: PieceState = PieceState.Falling,
-      override val position: Vertex = Vertex(0, 0),
-      override val localPos: Seq[Vertex] = Seq(
-        Vertex(-1.0, 0.5),
-        Vertex(0.0, 0.5),
-        Vertex(1.0, 0.5),
-        Vertex(-1.0, -0.5),
-      ),
-  ) extends Piece(material, state, position, localPos)
-
-  final case class OKind(
-      override val material: BlockMaterial,
-      override val state: PieceState = PieceState.Falling,
-      override val position: Vertex = Vertex(0, 0),
-      override val localPos: Seq[Vertex] = Seq(
-        Vertex(-0.5, 0.5),
-        Vertex(0.5, 0.5),
-        Vertex(-0.5, -0.5),
-        Vertex(0.5, -0.5),
-      ),
-  ) extends Piece(material, state, position, localPos)
-
-  final case class SKind(
-      override val material: BlockMaterial,
-      override val state: PieceState = PieceState.Falling,
-      override val position: Vertex = Vertex(0, 0),
-      override val localPos: Seq[Vertex] = Seq(
-        Vertex(0.0, 0.5),
-        Vertex(1.0, 0.5),
-        Vertex(-1.0, -0.5),
-        Vertex(0.0, -0.5),
-      ),
-  ) extends Piece(material, state, position, localPos)
-
-  final case class TKind(
-      override val material: BlockMaterial,
-      override val state: PieceState = PieceState.Falling,
-      override val position: Vertex = Vertex(0, 0),
-      override val localPos: Seq[Vertex] = Seq(
-        Vertex(-1.0, 0.0),
-        Vertex(0.0, 0.0),
-        Vertex(1.0, 0.0),
-        Vertex(0.0, 1.0),
-      ),
-  ) extends Piece(material, state, position, localPos)
-
-  final case class ZKind(
-      override val material: BlockMaterial,
-      override val state: PieceState = PieceState.Falling,
-      override val position: Vertex = Vertex(0, 0),
-      override val localPos: Seq[Vertex] = Seq(
-        Vertex(-1.0, 0.5),
-        Vertex(0.0, 0.5),
-        Vertex(0.0, -0.5),
-        Vertex(1.0, -0.5),
-      ),
-  ) extends Piece(material, state, position, localPos)
-
   def init(blockMaterials: Seq[BlockMaterial]): Option[Piece] =
-    fromBlockMaterial(blockMaterials).get(Random.nextInt(blockMaterials.length))
+    createFromMaterials(blockMaterials).get(
+      Random.nextInt(blockMaterials.length),
+    )
 
-  def move(piece: Piece, position: Vertex): Piece = piece match
-    case k: IKind =>
-      k.copy(position = position)
-    case k: JKind =>
-      k.copy(position = position)
-    case k: LKind =>
-      k.copy(position = position)
-    case k: OKind =>
-      k.copy(position = position)
-    case k: SKind =>
-      k.copy(position = position)
-    case k: TKind =>
-      k.copy(position = position)
-    case k: ZKind =>
-      k.copy(position = position)
+  def createFromMaterials(
+      materials: Seq[BlockMaterial],
+  ): Seq[Piece] =
+    for {
+      kind       <- PieceKind.values
+      material   <- materials
+      maybePiece <- create(kind, material).toSeq
+    } yield maybePiece
 
-  def moveByLocalPos(piece: Piece, localPos: Seq[Vertex]): Piece = piece match
-    case k: IKind =>
-      k.copy(localPos = localPos)
-    case k: JKind =>
-      k.copy(localPos = localPos)
-    case k: LKind =>
-      k.copy(localPos = localPos)
-    case k: OKind =>
-      k.copy(localPos = localPos)
-    case k: SKind =>
-      k.copy(localPos = localPos)
-    case k: TKind =>
-      k.copy(localPos = localPos)
-    case k: ZKind =>
-      k.copy(localPos = localPos)
+  def create(kind: PieceKind, material: BlockMaterial): Option[Piece] =
+    (kind, material) match
+      case (PieceKind.JKind(initPos, localPos), m: BlockMaterial.Blue)    =>
+        Piece(
+          material = m,
+          state = PieceState.Falling,
+          position = initPos,
+          localPos = localPos,
+        ).some
+      case (PieceKind.SKind(initPos, localPos), m: BlockMaterial.Green)   =>
+        Piece(
+          material = m,
+          state = PieceState.Falling,
+          position = initPos,
+          localPos = localPos,
+        ).some
+      case (PieceKind.ZKind(initPos, localPos), m: BlockMaterial.Red)     =>
+        Piece(
+          material = m,
+          state = PieceState.Falling,
+          position = initPos,
+          localPos = localPos,
+        ).some
+      case (PieceKind.LKind(initPos, localPos), m: BlockMaterial.Orange)  =>
+        Piece(
+          material = m,
+          state = PieceState.Falling,
+          position = initPos,
+          localPos = localPos,
+        ).some
+      case (PieceKind.TKind(initPos, localPos), m: BlockMaterial.Purple)  =>
+        Piece(
+          material = m,
+          state = PieceState.Falling,
+          position = initPos,
+          localPos = localPos,
+        ).some
+      case (PieceKind.IKind(initPos, localPos), m: BlockMaterial.SkyBlue) =>
+        Piece(
+          material = m,
+          state = PieceState.Falling,
+          position = initPos,
+          localPos = localPos,
+        ).some
+      case (PieceKind.OKind(initPos, localPos), m: BlockMaterial.Yellow)  =>
+        Piece(
+          material = m,
+          state = PieceState.Falling,
+          position = initPos,
+          localPos = localPos,
+        ).some
+      case _                                                              => none
 
-  def updateState(piece: Piece, state: PieceState): Piece = piece match
-    case k: IKind =>
-      k.copy(state = state)
-    case k: JKind =>
-      k.copy(state = state)
-    case k: LKind =>
-      k.copy(state = state)
-    case k: OKind =>
-      k.copy(state = state)
-    case k: SKind =>
-      k.copy(state = state)
-    case k: TKind =>
-      k.copy(state = state)
-    case k: ZKind =>
-      k.copy(state = state)
+  // private def materialToPiece(material: BlockMaterial): Piece =
+  //   material match
+  //     case m: JKind =>
+  //       Piece(
+  //         material = m,
+  //         state = PieceState.Falling,
+  //         kind = PieceKind.JKind,
+  //         position = Vertex(0, 0),
+  //         localPos = Seq(
+  //           Vertex(-1.0, 0.5),
+  //           Vertex(0.0, 0.5),
+  //           Vertex(1.0, 0.5),
+  //           Vertex(1.0, -0.5),
+  //         ),
+  //       )
+  //     case m: Green =>
+  //       Piece(
+  //         material = m,
+  //         state = PieceState.Falling,
+  //         kind = PieceKind.SKind,
+  //         position = Vertex(0, 0),
+  //         localPos = Seq(
+  //           Vertex(0.0, 0.5),
+  //           Vertex(1.0, 0.5),
+  //           Vertex(-1.0, -0.5),
+  //           Vertex(0.0, -0.5),
+  //         ),
+  //       )
 
-  private def fromBlockMaterial(materials: Seq[BlockMaterial]): Seq[Piece] =
-    materials.map(m => materialToPiece(m))
-
-  private def materialToPiece(material: BlockMaterial): Piece =
-    material match
-      case m: Blue    => JKind(m)
-      case m: Green   => SKind(m)
-      case m: Red     => ZKind(m)
-      case m: Orange  => LKind(m)
-      case m: Purple  => TKind(m)
-      case m: SkyBlue => IKind(m)
-      case m: Yellow  => OKind(m)
+  //     case m: Red     =>
+  //       Piece(
+  //         material = m,
+  //         state = PieceState.Falling,
+  //         kind = PieceKind.ZKind,
+  //         position = Vertex(0, 0),
+  //         localPos = Seq(
+  //           Vertex(-1.0, 0.5),
+  //           Vertex(0.0, 0.5),
+  //           Vertex(0.0, -0.5),
+  //           Vertex(1.0, -0.5),
+  //         ),
+  //       )
+  //     case m: Orange  =>
+  //       Piece(
+  //         material = m,
+  //         state = PieceState.Falling,
+  //         kind = PieceKind.LKind,
+  //         position = Vertex(0, 0),
+  //         localPos = Seq(
+  //           Vertex(-1.0, 0.5),
+  //           Vertex(0.0, 0.5),
+  //           Vertex(1.0, 0.5),
+  //           Vertex(-1.0, -0.5),
+  //         ),
+  //       )
+  //     case m: Purple  =>
+  //       Piece(
+  //         material = m,
+  //         state = PieceState.Falling,
+  //         kind = PieceKind.TKind,
+  //         position = Vertex(0, 0),
+  //         localPos = Seq(
+  //           Vertex(-1.0, 0.0),
+  //           Vertex(0.0, 0.0),
+  //           Vertex(1.0, 0.0),
+  //           Vertex(0.0, 1.0),
+  //         ),
+  //       )
+  //     case m: SkyBlue =>
+  //       Piece(
+  //         material = m,
+  //         state = PieceState.Falling,
+  //         kind = PieceKind.IKind,
+  //         position = Vertex(1, 0),
+  //         localPos = Seq(
+  //           Vertex(-1.5, 0),
+  //           Vertex(-0.5, 0),
+  //           Vertex(0.5, 0),
+  //           Vertex(1.5, 0),
+  //         ),
+  //       )
+  //     case m: Yellow  =>
+  //       Piece(
+  //         material = m,
+  //         state = PieceState.Falling,
+  //         kind = PieceKind.OKind,
+  //         position = Vertex(1, 0),
+  //         localPos = Seq(
+  //           Vertex(-0.5, 0.5),
+  //           Vertex(0.5, 0.5),
+  //           Vertex(-0.5, -0.5),
+  //           Vertex(0.5, -0.5),
+  //         ),
+  //       )

@@ -18,83 +18,54 @@ final case class GameModel private (
     tickPieceDown: Seconds,
     lastUpdated: Seconds,
     lastUpdatedPieceDown: Seconds,
-)
-
-object GameModel:
-
-  def init(
-      viewConfig: ViewConfig,
-      blockMaterial: Seq[BlockMaterial],
-  ): GameModel = GameModel(
-    piece = Piece.init(blockMaterials = blockMaterial),
-    stageMap = Set(),
-    currentDirection = PieceDirection.Neutral,
-    controlScheme = Seq(
-      PieceDirection.turningKeys,
-      PieceDirection.rotatingKeys,
-      PieceDirection.fallingKeys,
-    ),
-    tickDelay = Seconds(0.1),
-    tickPieceDown = Seconds(1.0),
-    lastUpdated = Seconds.zero,
-    lastUpdatedPieceDown = Seconds.zero,
-  )
-
-  def updateDirection(
-      model: GameModel,
-      direction: PieceDirection,
-      lastUpdated: Seconds = Seconds.zero,
-  ): GameModel =
-    model.copy(
-      currentDirection = direction,
-      lastUpdated = lastUpdated,
-    )
-
-  def updatePiece(
-      model: GameModel,
-      currentTime: Option[Seconds],
-      stageSize: BoundingBox,
-  ): GameModel = model.copy(
-    piece = model
-      .piece
-      .map(p =>
-        p.updatePositionByDirection(
-          stageSize,
-          model.stageMap.flatMap(_.current.toSet),
-          model.currentDirection,
-        ),
-      ),
-    lastUpdated = currentTime.getOrElse(Seconds.zero),
-  )
+):
 
   def updatePieceSoon(
-      model: GameModel,
       currentTime: Seconds,
       stageSize: BoundingBox,
-  ): GameModel = model.copy(
-    piece = model
-      .piece
-      .map(p =>
-        p.downPosition(
-          stageSize = stageSize,
-          placedPieces = model.stageMap.flatMap(_.current.toSet),
-        ),
+  ): GameModel = copy(
+    piece = piece.map(p =>
+      p.downPosition(
+        stageSize = stageSize,
+        placedPieces = stageMap.flatMap(_.current.toSet),
       ),
+    ),
     lastUpdatedPieceDown = currentTime,
   )
 
+  def updateDirection(
+      direction: PieceDirection,
+      lastUpdated: Seconds = Seconds.zero,
+  ): GameModel = copy(
+    currentDirection = direction,
+    lastUpdated = lastUpdated,
+  )
+
+  def updatePiece(
+      currentTime: Option[Seconds],
+      stageSize: BoundingBox,
+  ): GameModel = copy(
+    piece = piece.map(p =>
+      p.updatePositionByDirection(
+        stageSize,
+        stageMap.flatMap(_.current.toSet),
+        currentDirection,
+      ),
+    ),
+    lastUpdated = currentTime.getOrElse(Seconds.zero),
+  )
+
   def putPieceOnStage(
-      model: GameModel,
       stageSize: BoundingBox,
       blockMaterial: Seq[BlockMaterial],
       putPiece: Piece,
-  ): GameModel = model.copy(
-    piece = Piece.init(blockMaterials = blockMaterial),
+  ): GameModel = copy(
+    piece = Piece.init(blockMaterial),
     currentDirection = PieceDirection.Neutral,
     stageMap = {
-      val nextMap                = model.stageMap + putPiece
+      val nextMap                = stageMap + putPiece
       val filteredFillPositionY  =
-        filterFilledPositionY(nextMap, stageSize.width)
+        GameModel.filterFilledPositionY(nextMap, stageSize.width)
       val removableBlockPosition =
         (p: Piece) => p.current.filter(v => filteredFillPositionY.contains(v.y))
 
@@ -108,6 +79,26 @@ object GameModel:
     },
   )
 
+object GameModel:
+
+  def init(
+      viewConfig: ViewConfig,
+      blockMaterial: Seq[BlockMaterial],
+  ): GameModel = GameModel(
+    piece = Piece.init(blockMaterial),
+    stageMap = Set(),
+    currentDirection = PieceDirection.Neutral,
+    controlScheme = Seq(
+      PieceDirection.turningKeys,
+      PieceDirection.rotatingKeys,
+      PieceDirection.fallingKeys,
+    ),
+    tickDelay = Seconds(0.1),
+    tickPieceDown = Seconds(1.0),
+    lastUpdated = Seconds.zero,
+    lastUpdatedPieceDown = Seconds.zero,
+  )
+
   def filterFilledPositionY(
       map: Set[Piece],
       stageWidth: Double,
@@ -117,5 +108,5 @@ object GameModel:
     .filter(_._2 == factorialWidth(stageWidth))
     .keySet
 
-  def factorialWidth(stageWidth: Double): Int =
+  protected def factorialWidth(stageWidth: Double): Int =
     (1 to stageWidth.toInt).reduce(_ + _)

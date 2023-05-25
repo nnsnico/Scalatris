@@ -35,8 +35,7 @@ object GameController:
     case FrameTick
         if gameTime.running >= gameModel.lastUpdatedPieceDown + gameModel.tickPieceDown =>
       Outcome(
-        GameModel.updatePieceSoon(
-          model = gameModel,
+        gameModel.updatePieceSoon(
           currentTime = gameTime.running,
           stageSize = viewConfig.stageSize,
         ),
@@ -47,14 +46,12 @@ object GameController:
         .map(p =>
           p.state match {
             case PieceState.Falling =>
-              GameModel.updatePiece(
-                model = gameModel,
+              gameModel.updatePiece(
                 currentTime = gameTime.running.some,
                 stageSize = viewConfig.stageSize,
               )
             case PieceState.Landed  =>
-              GameModel.putPieceOnStage(
-                gameModel,
+              gameModel.putPieceOnStage(
                 viewConfig.stageSize,
                 blockMaterial,
                 p,
@@ -64,8 +61,7 @@ object GameController:
         .toOutcome
     case e: KeyboardEvent =>
       Outcome(
-        GameModel.updateDirection(
-          model = gameModel,
+        gameModel.updateDirection(
           direction = gameModel
             .controlScheme
             .map(_.toPieceDirection(e))

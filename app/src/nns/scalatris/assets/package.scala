@@ -5,7 +5,7 @@ import indigo.shared.materials.Material
 
 package object assets:
 
-  private[this] trait Assets[T <: Material]:
+  private[assets] trait Assets[T <: Material]:
     protected val assetName: AssetName
     protected[assets] val material: T
     protected[assets] def path(baseUrl: String): AssetType

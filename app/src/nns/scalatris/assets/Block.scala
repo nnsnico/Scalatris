@@ -21,13 +21,13 @@ object Block extends Assets[Material.Bitmap]:
     )
 
   def materials(size: GridSquareSize): Seq[BlockMaterial] = Seq(
-    Blue(size),
-    Green(size),
-    Red(size),
-    Orange(size),
-    Purple(size),
-    SkyBlue(size),
-    Yellow(size),
+    BlockMaterial.Blue(size),
+    BlockMaterial.Green(size),
+    BlockMaterial.Red(size),
+    BlockMaterial.Orange(size),
+    BlockMaterial.Purple(size),
+    BlockMaterial.SkyBlue(size),
+    BlockMaterial.Yellow(size),
   )
 
 sealed trait BlockMaterial:
@@ -42,77 +42,79 @@ sealed trait BlockMaterial:
     material = Block.material,
   )
 
-final case class Blue(size: GridSquareSize)
-    extends BlockMaterial
+object BlockMaterial:
 
-final case class Green(size: GridSquareSize)
-    extends BlockMaterial:
+  final case class Blue(size: GridSquareSize)
+      extends BlockMaterial
 
-  override val bitmap = super
-    .bitmap
-    .withCrop(
-      x = bitmapSize,
-      y = 0,
-      width = size.toInt,
-      height = size.toInt,
-    )
+  final case class Green(size: GridSquareSize)
+      extends BlockMaterial:
 
-final case class Red(size: GridSquareSize)
-    extends BlockMaterial:
+    override val bitmap = super
+      .bitmap
+      .withCrop(
+        x = bitmapSize,
+        y = 0,
+        width = size.toInt,
+        height = size.toInt,
+      )
 
-  override val bitmap = super
-    .bitmap
-    .withCrop(
-      x = bitmapSize * 2,
-      y = 0,
-      width = size.toInt,
-      height = size.toInt,
-    )
+  final case class Red(size: GridSquareSize)
+      extends BlockMaterial:
 
-final case class Orange(size: GridSquareSize)
-    extends BlockMaterial:
+    override val bitmap = super
+      .bitmap
+      .withCrop(
+        x = bitmapSize * 2,
+        y = 0,
+        width = size.toInt,
+        height = size.toInt,
+      )
 
-  override val bitmap = super
-    .bitmap
-    .withCrop(
-      x = 0,
-      y = bitmapSize,
-      width = size.toInt,
-      height = size.toInt,
-    )
+  final case class Orange(size: GridSquareSize)
+      extends BlockMaterial:
 
-final case class Purple(size: GridSquareSize)
-    extends BlockMaterial:
+    override val bitmap = super
+      .bitmap
+      .withCrop(
+        x = 0,
+        y = bitmapSize,
+        width = size.toInt,
+        height = size.toInt,
+      )
 
-  override val bitmap = super
-    .bitmap
-    .withCrop(
-      x = bitmapSize,
-      y = bitmapSize,
-      width = size.toInt,
-      height = size.toInt,
-    )
+  final case class Purple(size: GridSquareSize)
+      extends BlockMaterial:
 
-final case class SkyBlue(size: GridSquareSize)
-    extends BlockMaterial:
+    override val bitmap = super
+      .bitmap
+      .withCrop(
+        x = bitmapSize,
+        y = bitmapSize,
+        width = size.toInt,
+        height = size.toInt,
+      )
 
-  override val bitmap = super
-    .bitmap
-    .withCrop(
-      x = bitmapSize * 2,
-      y = bitmapSize,
-      width = size.toInt,
-      height = size.toInt,
-    )
+  final case class SkyBlue(size: GridSquareSize)
+      extends BlockMaterial:
 
-final case class Yellow(size: GridSquareSize)
-    extends BlockMaterial:
+    override val bitmap = super
+      .bitmap
+      .withCrop(
+        x = bitmapSize * 2,
+        y = bitmapSize,
+        width = size.toInt,
+        height = size.toInt,
+      )
 
-  override val bitmap = super
-    .bitmap
-    .withCrop(
-      x = 0,
-      y = bitmapSize * 2,
-      width = size.toInt,
-      height = size.toInt,
-    )
+  final case class Yellow(size: GridSquareSize)
+      extends BlockMaterial:
+
+    override val bitmap = super
+      .bitmap
+      .withCrop(
+        x = 0,
+        y = bitmapSize * 2,
+        width = size.toInt,
+        height = size.toInt,
+      )
