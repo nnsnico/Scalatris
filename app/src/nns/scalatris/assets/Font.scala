@@ -2,6 +2,7 @@ package nns.scalatris.assets
 
 import indigo.*
 import indigo.shared.*
+import indigo.shared.datatypes.Vector2
 import indigo.shared.materials.Material.ImageEffects
 
 object Font extends Assets[Material.ImageEffects]:

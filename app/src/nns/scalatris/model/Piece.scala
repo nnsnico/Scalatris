@@ -128,21 +128,23 @@ final case class Piece(
 
 object Piece:
 
-  def init(blockMaterials: Seq[BlockMaterial]): Option[Piece] =
-    createFromMaterials(blockMaterials).get(
-      Random.nextInt(blockMaterials.length),
-    )
+  def init(blockMaterials: Seq[BlockMaterial], index: Int): Either[Throwable, Piece] =
+    createFromMaterials(blockMaterials)
+      .get(index)
+      .toRight(Exception("Piece#init: Failed to initial Piece"))
 
   def createFromMaterials(
       materials: Seq[BlockMaterial],
-  ): Seq[Piece] =
-    for {
-      kind       <- PieceKind.values
-      material   <- materials
-      maybePiece <- create(kind, material).toSeq
-    } yield maybePiece
+  ): EitherT[Seq, Throwable, Piece] = for {
+    kind       <- EitherT.right(PieceKind.values)
+    material   <- EitherT.right(materials)
+    maybePiece <- EitherT.fromEither(create(kind, material))
+  } yield maybePiece
 
-  def create(kind: PieceKind, material: BlockMaterial): Option[Piece] =
+  def create(
+      kind: PieceKind,
+      material: BlockMaterial,
+  ): Either[Throwable, Piece] =
     (kind, material) match
       case (PieceKind.JKind(initPos, localPos), m: BlockMaterial.Blue)    =>
         Piece(
@@ -150,47 +152,47 @@ object Piece:
           state = PieceState.Falling,
           position = initPos,
           localPos = localPos,
-        ).some
+        ).asRight
       case (PieceKind.SKind(initPos, localPos), m: BlockMaterial.Green)   =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
           localPos = localPos,
-        ).some
+        ).asRight
       case (PieceKind.ZKind(initPos, localPos), m: BlockMaterial.Red)     =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
           localPos = localPos,
-        ).some
+        ).asRight
       case (PieceKind.LKind(initPos, localPos), m: BlockMaterial.Orange)  =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
           localPos = localPos,
-        ).some
+        ).asRight
       case (PieceKind.TKind(initPos, localPos), m: BlockMaterial.Purple)  =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
           localPos = localPos,
-        ).some
+        ).asRight
       case (PieceKind.IKind(initPos, localPos), m: BlockMaterial.SkyBlue) =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
           localPos = localPos,
-        ).some
+        ).asRight
       case (PieceKind.OKind(initPos, localPos), m: BlockMaterial.Yellow)  =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
           localPos = localPos,
-        ).some
-      case _                                                              => none
+        ).asRight
+      case _                                                              => Left(Exception("Piece#create: Failed to create piece"))

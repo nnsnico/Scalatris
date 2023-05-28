@@ -20,22 +20,27 @@ class GameModelTest extends munit.FunSuite {
       Set(
         Piece
           .create(PieceKind.OKind(), material)
+          .toOption
           .get
           .copy(position = Vertex(0, 0)),
         Piece
           .create(PieceKind.OKind(), material)
+          .toOption
           .get
           .copy(position = Vertex(2, 0)),
         Piece
           .create(PieceKind.OKind(), material)
+          .toOption
           .get
           .copy(position = Vertex(4, 0)),
         Piece
           .create(PieceKind.OKind(), material)
+          .toOption
           .get
           .copy(position = Vertex(6, 0)),
         Piece
           .create(PieceKind.OKind(), material)
+          .toOption
           .get
           .copy(position = Vertex(8, 0)),
       )

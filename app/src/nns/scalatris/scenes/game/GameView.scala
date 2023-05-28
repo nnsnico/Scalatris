@@ -1,10 +1,14 @@
 package nns.scalatris.scenes.game
 
+import cats.syntax.all._
 import indigo.*
-import indigo.logger._
+import indigo.shared.collections.Batch
+import indigo.shared.datatypes.Vector2
+import indigo.shared.scenegraph.TextBox
 import indigoextras.geometry.Vertex
 import nns.scalatris.assets._
-import nns.scalatris.model.{GlobalModel, Piece}
+import nns.scalatris.assets.{Font => GameFont}
+import nns.scalatris.model.{GlobalModel, Piece, PieceState}
 import nns.scalatris.{GridSquareSize, ViewConfig}
 
 import scala.util.Random
@@ -24,13 +28,14 @@ object GameView:
             BindingKey("ui"),
             stage :: model
               .piece
-              .map(p =>
-                drawPiece(
-                  piece = p,
-                  stageSizeOffSet = viewConfig.stageSize.position,
-                ),
-              )
-              .orNull ++ Batch.fromSet(
+              .fold(
+                e => drawDebugLog(viewConfig.viewport, e.toString),
+                v =>
+                  drawPiece(
+                    piece = v,
+                    stageSizeOffSet = viewConfig.stageSize.position,
+                  ),
+              ) ++ Batch.fromSet(
               model
                 .stageMap
                 .flatMap(p => drawPiece(p, viewConfig.stageSize.position).toSet),
@@ -53,3 +58,15 @@ object GameView:
         )
     },
   )
+
+  private def drawDebugLog(
+      viewport: GameViewport,
+      text: String,
+  ): Batch[SceneNode] =
+    Batch(
+      GameFont.toText(
+        text.grouped(20).reduce { case (z, s) => z + "\n" + s },
+        0,
+        0,
+      ),
+    )

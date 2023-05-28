@@ -1,16 +1,17 @@
 package nns.scalatris.scenes.game
 
 import indigo.*
-import indigoextras.geometry.{BoundingBox, Vertex}
 import indigo.logger._
+import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.assets.BlockMaterial
+import nns.scalatris.extensions.fold
 import nns.scalatris.model.PieceDirection.ControlScheme
 import nns.scalatris.model.{Piece, PieceDirection}
 import nns.scalatris.{GridSquareSize, ViewConfig}
-import nns.scalatris.extensions.fold
+import scala.util.Random
 
 final case class GameModel private (
-    piece: Option[Piece],
+    piece: Either[Throwable, Piece],
     stageMap: Set[Piece],
     currentDirection: PieceDirection,
     controlScheme: Seq[ControlScheme],
@@ -60,7 +61,7 @@ final case class GameModel private (
       blockMaterial: Seq[BlockMaterial],
       putPiece: Piece,
   ): GameModel = copy(
-    piece = Piece.init(blockMaterial),
+    piece = Piece.init(blockMaterial, Random.nextInt(blockMaterial.length)),
     currentDirection = PieceDirection.Neutral,
     stageMap = {
       val nextMap                = stageMap + putPiece
@@ -85,7 +86,7 @@ object GameModel:
       viewConfig: ViewConfig,
       blockMaterial: Seq[BlockMaterial],
   ): GameModel = GameModel(
-    piece = Piece.init(blockMaterial),
+    piece = Piece.init(blockMaterial, Random.nextInt(blockMaterial.length)),
     stageMap = Set(),
     currentDirection = PieceDirection.Neutral,
     controlScheme = Seq(
