@@ -3,11 +3,11 @@ package nns.scalatris
 import indigo.*
 import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.types.GridSquareSize.*
-import nns.scalatris.types.GridSquareSize
+import nns.scalatris.types.{GridSize, GridSquareSize, StageSize}
 
 final case class ViewConfig(
-    gridSize: BoundingBox,
-    stageSize: BoundingBox,
+    gridSize: GridSize,
+    stageSize: StageSize,
     gridSquareSize: GridSquareSize,
     magnificationLevel: Int,
     viewport: GameViewport,
@@ -33,11 +33,13 @@ object ViewConfig:
     ).toInt
 
     ViewConfig(
-      gridSize = gridSize,
-      stageSize = stageSize.copy(
-        position = Vertex(
-          x = stageHorizontalCenterStart,
-          y = 0,
+      gridSize = GridSize(gridSize),
+      stageSize = StageSize(
+        stageSize.copy(
+          position = Vertex(
+            x = stageHorizontalCenterStart,
+            y = 0,
+          ),
         ),
       ),
       gridSquareSize = gridSquareSize,

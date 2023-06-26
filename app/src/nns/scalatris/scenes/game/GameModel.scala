@@ -3,11 +3,13 @@ package nns.scalatris.scenes.game
 import indigo.*
 import indigo.logger._
 import indigoextras.geometry.{BoundingBox, Vertex}
+import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions.Boolean.*
 import nns.scalatris.model.PieceDirection.ControlScheme
 import nns.scalatris.model.{Piece, PieceDirection}
-import nns.scalatris.ViewConfig
+import nns.scalatris.types.StageSize
+
 import scala.util.Random
 
 final case class GameModel private (
@@ -23,7 +25,7 @@ final case class GameModel private (
 
   def updatePieceSoon(
       currentTime: Seconds,
-      stageSize: BoundingBox,
+      stageSize: StageSize,
   ): GameModel = copy(
     piece = piece.map(p =>
       p.downPosition(
@@ -44,7 +46,7 @@ final case class GameModel private (
 
   def updatePiece(
       currentTime: Option[Seconds],
-      stageSize: BoundingBox,
+      stageSize: StageSize,
   ): GameModel = copy(
     piece = piece.map(p =>
       p.updatePositionByDirection(
@@ -57,7 +59,7 @@ final case class GameModel private (
   )
 
   def putPieceOnStage(
-      stageSize: BoundingBox,
+      stageSize: StageSize,
       blockMaterial: Seq[BlockMaterial],
       putPiece: Piece,
   ): GameModel = copy(

@@ -5,11 +5,11 @@ import indigo.logger.*
 import indigo.shared.*
 import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.types.GridSquareSize.*
-import nns.scalatris.types.GridSquareSize
+import nns.scalatris.types.{GridSquareSize, StageSize}
 
 final case class Grid(
     gridSize: GridSquareSize,
-    stageSize: BoundingBox,
+    stageSize: StageSize,
 ):
 
   def createStageBounds: Seq[Shape.Box] = for {

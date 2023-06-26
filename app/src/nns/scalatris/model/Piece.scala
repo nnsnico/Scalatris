@@ -7,9 +7,10 @@ import indigo.*
 import indigo.shared.*
 import indigo.shared.events.KeyboardEvent
 import indigoextras.geometry.{BoundingBox, Vertex}
+import nns.scalatris.ViewConfig
 import nns.scalatris.assets.{Block, BlockMaterial}
 import nns.scalatris.extensions.Boolean.*
-import nns.scalatris.ViewConfig
+import nns.scalatris.types.StageSize
 
 import scala.util.Random
 
@@ -23,7 +24,7 @@ final case class Piece(
   def current: Seq[Vertex] = localPos.map(convertToStagePosition(_, position))
 
   def downPosition(
-      stageSize: BoundingBox,
+      stageSize: StageSize,
       placedPieces: Set[Vertex],
   ): Piece =
     val nextPos = current.map(pos => pos + Vertex(0, 1))
@@ -36,7 +37,7 @@ final case class Piece(
     )
 
   def updatePositionByDirection(
-      stageSize: BoundingBox,
+      stageSize: StageSize,
       placedPieces: Set[Vertex],
       direction: PieceDirection,
   ): Piece =
@@ -128,7 +129,10 @@ final case class Piece(
 
 object Piece:
 
-  def init(blockMaterials: Seq[BlockMaterial], index: Int): Either[Throwable, Piece] =
+  def init(
+      blockMaterials: Seq[BlockMaterial],
+      index: Int,
+  ): Either[Throwable, Piece] =
     createFromMaterials(blockMaterials)
       .get(index)
       .toRight(Exception("Piece#init: Failed to initial Piece"))
