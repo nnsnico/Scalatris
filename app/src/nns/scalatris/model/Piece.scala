@@ -8,8 +8,8 @@ import indigo.shared.*
 import indigo.shared.events.KeyboardEvent
 import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.assets.{Block, BlockMaterial}
-import nns.scalatris.extensions._
-import nns.scalatris.{GridSquareSize, ViewConfig}
+import nns.scalatris.extensions.Boolean.*
+import nns.scalatris.ViewConfig
 
 import scala.util.Random
 

@@ -2,23 +2,8 @@ package nns.scalatris
 
 import indigo.*
 import indigoextras.geometry.{BoundingBox, Vertex}
-
-opaque type GridSquareSize = Int
-
-object GridSquareSize:
-  def apply(i: Int): GridSquareSize = i
-
-  extension (s: GridSquareSize)
-
-    def toInt: Int = identity(s)
-
-    def *(v: GridSquareSize | Int | Double): GridSquareSize = v match
-      case i: Int => math.multiplyExact(s, i)
-      case d: Double => math.multiplyExact(s, d.toInt)
-
-    def +(v: GridSquareSize | Int | Double): GridSquareSize = v match
-      case i: Int => math.addExact(s, i)
-      case d: Double => math.addExact(s, d.toInt)
+import nns.scalatris.types.GridSquareSize.*
+import nns.scalatris.types.GridSquareSize
 
 final case class ViewConfig(
     gridSize: BoundingBox,
@@ -36,13 +21,13 @@ object ViewConfig:
 
   def default: ViewConfig =
 
-    val gridSize  = BoundingBox(width = 30, height = 30)
-    val stageSize = BoundingBox(width = 10, height = 20)
-    val viewport = GameViewport(
-        ((gridSquareSize * gridSize.width.toInt) * magnificationLevel).toInt,
-        ((gridSquareSize * gridSize.height.toInt) * magnificationLevel).toInt,
-      )
-    val horizontalCenter = (viewport.width / magnificationLevel) / 2
+    val gridSize                   = BoundingBox(width = 30, height = 30)
+    val stageSize                  = BoundingBox(width = 10, height = 20)
+    val viewport                   = GameViewport(
+      ((gridSquareSize * gridSize.width) * magnificationLevel).toInt,
+      ((gridSquareSize * gridSize.height) * magnificationLevel).toInt,
+    )
+    val horizontalCenter           = (viewport.width / magnificationLevel) / 2
     val stageHorizontalCenterStart = horizontalCenter - (
       gridSquareSize * stageSize.horizontalCenter
     ).toInt
@@ -53,12 +38,12 @@ object ViewConfig:
         position = Vertex(
           x = stageHorizontalCenterStart,
           y = 0,
-        )
+        ),
       ),
       gridSquareSize = gridSquareSize,
       magnificationLevel = magnificationLevel,
       viewport = GameViewport(
-        ((gridSquareSize * gridSize.width.toInt) * magnificationLevel).toInt,
-        ((gridSquareSize * gridSize.height.toInt) * magnificationLevel).toInt,
+        ((gridSquareSize * gridSize.width) * magnificationLevel).toInt,
+        ((gridSquareSize * gridSize.height) * magnificationLevel).toInt,
       ),
     )

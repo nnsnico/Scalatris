@@ -5,8 +5,7 @@ import indigo.shared.*
 import indigo.shared.datatypes.Vector2
 import indigo.shared.materials.Material.Bitmap
 import indigo.shared.scenegraph.Graphic
-import nns.scalatris.GridSquareSize
-import nns.scalatris.GridSquareSize._
+import nns.scalatris.types.GridSquareSize
 
 object Block extends Assets[Material.Bitmap]:
 

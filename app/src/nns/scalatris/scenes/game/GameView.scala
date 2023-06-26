@@ -9,7 +9,8 @@ import indigoextras.geometry.Vertex
 import nns.scalatris.assets._
 import nns.scalatris.assets.{Font => GameFont}
 import nns.scalatris.model.{GlobalModel, Piece, PieceState}
-import nns.scalatris.{GridSquareSize, ViewConfig}
+import nns.scalatris.ViewConfig
+import nns.scalatris.types.GridSquareSize
 
 import scala.util.Random
 

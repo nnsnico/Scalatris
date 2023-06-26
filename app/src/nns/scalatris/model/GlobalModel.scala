@@ -4,7 +4,7 @@ import indigo.*
 import indigo.shared.Outcome
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.scenes.game.{GameController, GameModel, GameView}
-import nns.scalatris.{GridSquareSize, ViewConfig}
+import nns.scalatris.ViewConfig
 
 final case class GlobalModel(
     gameController: GameController,

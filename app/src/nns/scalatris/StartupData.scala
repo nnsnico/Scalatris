@@ -4,7 +4,7 @@ import indigo.*
 import indigo.shared.*
 import indigoextras.geometry.BoundingBox
 import nns.scalatris.assets.{Block, Font, _}
-import nns.scalatris.extensions._
+import nns.scalatris.extensions.Option._
 
 final case class StartUpData(
     viewConfig: ViewConfig,

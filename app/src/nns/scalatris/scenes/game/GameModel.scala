@@ -4,10 +4,10 @@ import indigo.*
 import indigo.logger._
 import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.assets.BlockMaterial
-import nns.scalatris.extensions.fold
+import nns.scalatris.extensions.Boolean.*
 import nns.scalatris.model.PieceDirection.ControlScheme
 import nns.scalatris.model.{Piece, PieceDirection}
-import nns.scalatris.{GridSquareSize, ViewConfig}
+import nns.scalatris.ViewConfig
 import scala.util.Random
 
 final case class GameModel private (

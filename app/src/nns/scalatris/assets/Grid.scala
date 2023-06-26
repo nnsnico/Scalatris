@@ -4,7 +4,8 @@ import indigo.*
 import indigo.logger.*
 import indigo.shared.*
 import indigoextras.geometry.{BoundingBox, Vertex}
-import nns.scalatris.GridSquareSize
+import nns.scalatris.types.GridSquareSize.*
+import nns.scalatris.types.GridSquareSize
 
 final case class Grid(
     gridSize: GridSquareSize,
