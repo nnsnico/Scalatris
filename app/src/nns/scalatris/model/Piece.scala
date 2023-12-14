@@ -18,23 +18,11 @@ final case class Piece(
     val material: BlockMaterial,
     val state: PieceState,
     protected val position: Vertex,
-    protected val localPos: Seq[Vertex],
+    protected val localPosition: Seq[Vertex],
 ):
 
-  def current: Seq[Vertex] = localPos.map(convertToStagePosition(_, position))
-
-  def downPosition(
-      stageSize: StageSize,
-      placedPieces: Set[Vertex],
-  ): Piece =
-    val nextPos = current.map(pos => pos + Vertex(0, 1))
-    (
-      nextPos.map(_.y).max < stageSize.height &&
-        validateBlocks(placedPieces, nextPos)
-    ).fold(
-      copy(position = position + Vertex(0, 1)),
-      copy(state = PieceState.Landed),
-    )
+  def currentPosition: Seq[Vertex] =
+    localPosition.map(convertToStagePosition(_, position))
 
   def updatePositionByDirection(
       stageSize: StageSize,
@@ -45,38 +33,40 @@ final case class Piece(
       case PieceDirection.Neutral =>
         this
       case PieceDirection.Left    =>
-        val nextPos = current.map(pos => pos - Vertex(1, 0))
+        val nextPosition = currentPosition.map(_ - Vertex(1, 0))
         copy(
           position = (
-            nextPos.map(_.x).min >= 0 &&
-              validateBlocks(placedPieces, nextPos)
+            nextPosition.minBy(_.x).x >= 0 && checkForPiecePlacement(
+              placedPieces,
+              nextPosition,
+            )
           ).fold(
             position - Vertex(1, 0),
             position,
           ),
         )
       case PieceDirection.Right   =>
-        val nextPos = current.map(pos => pos + Vertex(1, 0))
+        val nextPosition = currentPosition.map(pos => pos + Vertex(1, 0))
         copy(
           position = (
-            nextPos.map(_.x).max < stageSize.width &&
-              validateBlocks(placedPieces, nextPos)
+            nextPosition.map(_.x).max < stageSize.width &&
+              checkForPiecePlacement(placedPieces, nextPosition)
           ).fold(
             position + Vertex(1, 0),
             position,
           ),
         )
       case PieceDirection.Up      =>
-        val nextPos = rotateLeft.map(convertToStagePosition(_, position))
-        this.copy(localPos =
-          (
-            nextPos.map(_.x).min >= 0 &&
-              nextPos.map(_.x).max < stageSize.width &&
-              nextPos.map(_.y).max < stageSize.height &&
-              validateBlocks(placedPieces, nextPos)
+        val nextPosition = rotateLeft.map(convertToStagePosition(_, position))
+        this.copy(
+          localPosition = (
+            nextPosition.minBy(_.x).x >= 0 &&
+              nextPosition.maxBy(_.x).x < stageSize.width &&
+              nextPosition.maxBy(_.y).y < stageSize.height &&
+              checkForPiecePlacement(placedPieces, nextPosition)
           ).fold(
             rotateLeft,
-            localPos,
+            localPosition,
           ),
         )
       case PieceDirection.Down    =>
@@ -84,14 +74,14 @@ final case class Piece(
 
   def removeBlock(position: Seq[Vertex]): Piece =
     copy(
-      localPos = localPos.filter(v =>
+      localPosition = localPosition.filter(v =>
         !position.contains(convertToStagePosition(v, this.position)),
       ),
     )
 
   def shiftBlocksToDown(filledPositionY: Set[Double]): Piece =
     copy(
-      localPos = localPos.map(v =>
+      localPosition = localPosition.map(v =>
         filledPositionY
           .toSeq
           .sorted
@@ -104,8 +94,13 @@ final case class Piece(
       ),
     )
 
-  private def validateBlocks(placedPieces: Set[Vertex], nextPos: Seq[Vertex]) =
-    (placedPieces & nextPos.toSet).isEmpty
+  /*
+   * check if piece can be placed on stage
+   */
+  private def checkForPiecePlacement(
+      placedPieces: Set[Vertex],
+      nextPos: Seq[Vertex],
+  ): Boolean = (placedPieces & nextPos.toSet).isEmpty
 
   private def convertToStagePosition(
       localPos: Vertex,
@@ -115,6 +110,19 @@ final case class Piece(
     math.floor(localPos.y + position.y + 0.5),
   )
 
+  private def downPosition(
+      stageSize: StageSize,
+      placedPieces: Set[Vertex],
+  ): Piece =
+    val nextPosition = currentPosition.map(_ + Vertex(0, 1))
+    (
+      nextPosition.maxBy(_.y).y < stageSize.height &&
+        checkForPiecePlacement(placedPieces, nextPosition)
+    ).fold(
+      copy(position = position + Vertex(0, 1)),
+      copy(state = PieceState.Landed),
+    )
+
   private def rotateLeft: Seq[Vertex] =
     val c = math.cos(-math.Pi / 2.0)
     val s = math.sin(-math.Pi / 2.0)
@@ -123,7 +131,7 @@ final case class Piece(
       case (x, y) =>
         (math.round(x * 2.0) * 0.5, math.round(y * 2.0) * 0.5)
 
-    localPos.map { v =>
+    localPosition.map { v =>
       roundToHalf((v.x * c - v.y * s, v.x * s + v.y * c))
     }.map { case (x, y) => Vertex(x, y) }
 
@@ -155,48 +163,48 @@ object Piece:
           material = m,
           state = PieceState.Falling,
           position = initPos,
-          localPos = localPos,
+          localPosition = localPos,
         ).asRight
       case (PieceKind.SKind(initPos, localPos), m: BlockMaterial.Green)   =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
-          localPos = localPos,
+          localPosition = localPos,
         ).asRight
       case (PieceKind.ZKind(initPos, localPos), m: BlockMaterial.Red)     =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
-          localPos = localPos,
+          localPosition = localPos,
         ).asRight
       case (PieceKind.LKind(initPos, localPos), m: BlockMaterial.Orange)  =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
-          localPos = localPos,
+          localPosition = localPos,
         ).asRight
       case (PieceKind.TKind(initPos, localPos), m: BlockMaterial.Purple)  =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
-          localPos = localPos,
+          localPosition = localPos,
         ).asRight
       case (PieceKind.IKind(initPos, localPos), m: BlockMaterial.SkyBlue) =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
-          localPos = localPos,
+          localPosition = localPos,
         ).asRight
       case (PieceKind.OKind(initPos, localPos), m: BlockMaterial.Yellow)  =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = initPos,
-          localPos = localPos,
+          localPosition = localPos,
         ).asRight
       case _                                                              => Left(Exception("Piece#create: Failed to create piece"))

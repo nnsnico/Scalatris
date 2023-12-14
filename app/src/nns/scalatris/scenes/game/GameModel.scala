@@ -23,14 +23,15 @@ final case class GameModel private (
     lastUpdatedPieceDown: Seconds,
 ):
 
-  def updatePieceSoon(
+  def dropOnePiece(
       currentTime: Seconds,
       stageSize: StageSize,
   ): GameModel = copy(
     piece = piece.map(p =>
-      p.downPosition(
+      p.updatePositionByDirection(
         stageSize = stageSize,
-        placedPieces = stageMap.flatMap(_.current.toSet),
+        placedPieces = stageMap.flatMap(_.currentPosition.toSet),
+        direction = PieceDirection.Down,
       ),
     ),
     lastUpdatedPieceDown = currentTime,
@@ -51,7 +52,7 @@ final case class GameModel private (
     piece = piece.map(p =>
       p.updatePositionByDirection(
         stageSize,
-        stageMap.flatMap(_.current.toSet),
+        stageMap.flatMap(_.currentPosition.toSet),
         currentDirection,
       ),
     ),
@@ -70,7 +71,8 @@ final case class GameModel private (
       val filteredFillPositionY  =
         GameModel.filterFilledPositionY(nextMap, stageSize.width)
       val removableBlockPosition =
-        (p: Piece) => p.current.filter(v => filteredFillPositionY.contains(v.y))
+        (p: Piece) =>
+          p.currentPosition.filter(v => filteredFillPositionY.contains(v.y))
 
       nextMap
         .map(p =>
@@ -106,7 +108,7 @@ object GameModel:
       map: Set[Piece],
       stageWidth: Double,
   ): Set[Double] = map
-    .flatMap(_.current)
+    .flatMap(_.currentPosition)
     .groupMapReduce(_.y)(_.x + 1)(_ + _)
     .filter(_._2 == factorialWidth(stageWidth))
     .keySet

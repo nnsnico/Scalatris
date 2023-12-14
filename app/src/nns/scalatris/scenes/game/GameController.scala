@@ -35,7 +35,7 @@ object GameController:
     case FrameTick
         if gameTime.running >= gameModel.lastUpdatedPieceDown + gameModel.tickPieceDown =>
       Outcome(
-        gameModel.updatePieceSoon(
+        gameModel.dropOnePiece(
           currentTime = gameTime.running,
           stageSize = viewConfig.stageSize,
         ),
