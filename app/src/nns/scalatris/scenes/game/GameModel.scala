@@ -12,6 +12,9 @@ import nns.scalatris.types.StageSize
 
 import scala.util.Random
 
+final private val TICK_FRAME_SECONDS = 0.1f
+final private val FALL_DOWN_SECONDS  = 1.0f
+
 final case class GameModel private (
     piece: Either[Throwable, Piece],
     stageMap: Set[Piece],
@@ -90,7 +93,11 @@ object GameModel:
       viewConfig: ViewConfig,
       blockMaterial: Seq[BlockMaterial],
   ): GameModel = GameModel(
-    piece = Piece.init(blockMaterial, Random.nextInt(blockMaterial.length)),
+    // TODO: put all blocks in order to not duplicated
+    piece = Piece.init(
+      blockMaterials = blockMaterial,
+      index = Random.nextInt(blockMaterial.length),
+    ),
     stageMap = Set(),
     currentDirection = PieceDirection.Neutral,
     controlScheme = Seq(
@@ -98,8 +105,8 @@ object GameModel:
       PieceDirection.rotatingKeys,
       PieceDirection.fallingKeys,
     ),
-    tickDelay = Seconds(0.1),
-    tickPieceDown = Seconds(1.0),
+    tickDelay = Seconds(TICK_FRAME_SECONDS),
+    tickPieceDown = Seconds(FALL_DOWN_SECONDS),
     lastUpdated = Seconds.zero,
     lastUpdatedPieceDown = Seconds.zero,
   )
@@ -110,7 +117,7 @@ object GameModel:
   ): Set[Double] = map
     .flatMap(_.currentPosition)
     .groupMapReduce(_.y)(_.x + 1)(_ + _)
-    .filter(_._2 == factorialWidth(stageWidth))
+    .filter((_, y) => y == factorialWidth(stageWidth))
     .keySet
 
   protected def factorialWidth(stageWidth: Double): Int =

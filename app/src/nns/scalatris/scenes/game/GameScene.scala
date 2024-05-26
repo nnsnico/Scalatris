@@ -56,4 +56,4 @@ object GameScene extends Scene[StartUpData, GlobalModel, ViewModel]:
       stage = viewModel,
     )
 
-  override def subSystems: Set[SubSystem] = Set()
+  override def subSystems: Set[SubSystem] = Set.empty

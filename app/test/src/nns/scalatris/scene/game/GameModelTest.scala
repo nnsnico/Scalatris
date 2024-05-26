@@ -1,12 +1,12 @@
 package nns.scalatris.scenes.game
 
 import indigo.shared.{Outcome, Startup}
-import munit.*
-import nns.scalatris.{StartUpData, ViewConfig}
-import nns.scalatris.model.{Piece, PieceKind, PieceState}
-import nns.scalatris.assets.{Block, BlockMaterial}
-import nns.scalatris.assets.Block.materials
 import indigoextras.geometry.Vertex
+import munit._
+import nns.scalatris.assets.Block.materials
+import nns.scalatris.assets.{Block, BlockMaterial}
+import nns.scalatris.model.{Piece, PieceKind, PieceState}
+import nns.scalatris.{StartUpData, ViewConfig}
 
 class GameModelTest extends munit.FunSuite {
 

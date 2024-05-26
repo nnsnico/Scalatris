@@ -12,8 +12,6 @@ import nns.scalatris.assets.{Block, BlockMaterial}
 import nns.scalatris.extensions.Boolean.*
 import nns.scalatris.types.StageSize
 
-import scala.util.Random
-
 final case class Piece(
     val material: BlockMaterial,
     val state: PieceState,

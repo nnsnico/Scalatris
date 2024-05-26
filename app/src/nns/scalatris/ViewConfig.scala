@@ -20,12 +20,11 @@ object ViewConfig:
   final private val magnificationLevel = 2
 
   def default: ViewConfig =
-
     val gridSize                   = BoundingBox(width = 30, height = 30)
     val stageSize                  = BoundingBox(width = 10, height = 20)
     val viewport                   = GameViewport(
-      ((gridSquareSize * gridSize.width) * magnificationLevel).toInt,
-      ((gridSquareSize * gridSize.height) * magnificationLevel).toInt,
+      width = ((gridSquareSize * gridSize.width) * magnificationLevel).toInt,
+      height = ((gridSquareSize * gridSize.height) * magnificationLevel).toInt,
     )
     val horizontalCenter           = (viewport.width / magnificationLevel) / 2
     val stageHorizontalCenterStart = horizontalCenter - (
@@ -44,8 +43,5 @@ object ViewConfig:
       ),
       gridSquareSize = gridSquareSize,
       magnificationLevel = magnificationLevel,
-      viewport = GameViewport(
-        ((gridSquareSize * gridSize.width) * magnificationLevel).toInt,
-        ((gridSquareSize * gridSize.height) * magnificationLevel).toInt,
-      ),
+      viewport = viewport,
     )

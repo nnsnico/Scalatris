@@ -50,9 +50,7 @@ object Main extends IndigoGame[ViewConfig, StartUpData, GlobalModel, ViewModel]:
 
   // The first Scene
   override def initialScene(viewConfig: ViewConfig): Option[SceneName] =
-    Option(
-      GameScene.name,
-    )
+    TitleScene.name.some
 
   // initialize global game model
   override def initialModel(startupData: StartUpData): Outcome[GlobalModel] =

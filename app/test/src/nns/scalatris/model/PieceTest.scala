@@ -3,9 +3,10 @@ package nns.scalatris.model
 import cats._
 import cats.data._
 import cats.syntax.all._
-import munit.*
+import munit._
+import nns.scalatris.ViewConfig
 import nns.scalatris.assets.{Block, BlockMaterial}
-import nns.scalatris.{GridSquareSize, ViewConfig}
+import nns.scalatris.types.GridSquareSize
 
 class PieceTest extends munit.FunSuite {
   val viewConfig = ViewConfig.default

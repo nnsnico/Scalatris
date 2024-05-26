@@ -30,8 +30,9 @@ object Block extends Assets[Material.Bitmap]:
   )
 
 sealed trait BlockMaterial:
-  final protected val bitmapSize = 64
+  final protected val bitmapSize       = 64
   val size: GridSquareSize
+
   def bitmap: Graphic[Material.Bitmap] = Graphic[Material.Bitmap](
     x = 0,
     y = 0,
@@ -43,11 +44,9 @@ sealed trait BlockMaterial:
 
 object BlockMaterial:
 
-  final case class Blue(size: GridSquareSize)
-      extends BlockMaterial
+  final case class Blue(size: GridSquareSize) extends BlockMaterial
 
-  final case class Green(size: GridSquareSize)
-      extends BlockMaterial:
+  final case class Green(size: GridSquareSize) extends BlockMaterial:
 
     override val bitmap = super
       .bitmap
@@ -58,8 +57,7 @@ object BlockMaterial:
         height = size.toInt,
       )
 
-  final case class Red(size: GridSquareSize)
-      extends BlockMaterial:
+  final case class Red(size: GridSquareSize) extends BlockMaterial:
 
     override val bitmap = super
       .bitmap
@@ -70,8 +68,7 @@ object BlockMaterial:
         height = size.toInt,
       )
 
-  final case class Orange(size: GridSquareSize)
-      extends BlockMaterial:
+  final case class Orange(size: GridSquareSize) extends BlockMaterial:
 
     override val bitmap = super
       .bitmap
@@ -82,8 +79,7 @@ object BlockMaterial:
         height = size.toInt,
       )
 
-  final case class Purple(size: GridSquareSize)
-      extends BlockMaterial:
+  final case class Purple(size: GridSquareSize) extends BlockMaterial:
 
     override val bitmap = super
       .bitmap
@@ -94,8 +90,7 @@ object BlockMaterial:
         height = size.toInt,
       )
 
-  final case class SkyBlue(size: GridSquareSize)
-      extends BlockMaterial:
+  final case class SkyBlue(size: GridSquareSize) extends BlockMaterial:
 
     override val bitmap = super
       .bitmap
@@ -106,8 +101,7 @@ object BlockMaterial:
         height = size.toInt,
       )
 
-  final case class Yellow(size: GridSquareSize)
-      extends BlockMaterial:
+  final case class Yellow(size: GridSquareSize) extends BlockMaterial:
 
     override val bitmap = super
       .bitmap

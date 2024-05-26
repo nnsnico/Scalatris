@@ -52,9 +52,9 @@ object GameController:
               )
             case PieceState.Landed  =>
               gameModel.putPieceOnStage(
-                viewConfig.stageSize,
-                blockMaterial,
-                p,
+                stageSize = viewConfig.stageSize,
+                blockMaterial = blockMaterial,
+                putPiece = p,
               )
           },
         )

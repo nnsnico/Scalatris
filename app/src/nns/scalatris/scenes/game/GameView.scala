@@ -1,7 +1,7 @@
 package nns.scalatris.scenes.game
 
 import cats.syntax.all._
-import indigo.*
+import indigo._
 import indigo.shared.collections.Batch
 import indigo.shared.datatypes.Vector2
 import indigo.shared.scenegraph.TextBox
@@ -10,9 +10,6 @@ import nns.scalatris.ViewConfig
 import nns.scalatris.assets._
 import nns.scalatris.assets.{Font => GameFont}
 import nns.scalatris.model.{GlobalModel, Piece, PieceState}
-import nns.scalatris.types.GridSquareSize
-
-import scala.util.Random
 
 object GameView:
 
