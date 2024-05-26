@@ -8,6 +8,7 @@ import nns.scalatris.model.{GlobalModel, PieceDirection}
 import nns.scalatris.scenes.game.GameScene
 
 import scala.scalajs.js.annotation.JSExportTopLevel
+import nns.scalatris.scenes.title.TitleScene
 
 @JSExportTopLevel("IndigoGame")
 object Main extends IndigoGame[ViewConfig, StartUpData, GlobalModel, ViewModel]:
@@ -44,6 +45,7 @@ object Main extends IndigoGame[ViewConfig, StartUpData, GlobalModel, ViewModel]:
   ): NonEmptyList[Scene[StartUpData, GlobalModel, ViewModel]] =
     NonEmptyList(
       GameScene,
+      TitleScene,
     )
 
   // The first Scene
