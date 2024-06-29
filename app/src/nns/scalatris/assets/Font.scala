@@ -17,7 +17,7 @@ object Font extends Assets[Material.ImageEffects]:
       AssetPath(baseUrl + "assets/" + assetName + ".png"),
     )
 
-  private[this] val key: FontKey = FontKey("boxy font")
+  private val key: FontKey = FontKey("boxy font")
 
   val info: FontInfo = FontInfo(key, 320, 230, FontChar("?", 47, 26, 11, 12))
     .addChar(FontChar("A", 2, 39, 10, 12))

@@ -20,7 +20,7 @@ object StartUpData:
   def initialize(viewConfig: ViewConfig): Outcome[Startup[StartUpData]] =
     Outcome(createStartupData(viewConfig).toStartup)
 
-  private[this] def createStartupData(
+  private def createStartupData(
       viewConfig: ViewConfig,
   ): Option[StartUpData] =
     Some(
