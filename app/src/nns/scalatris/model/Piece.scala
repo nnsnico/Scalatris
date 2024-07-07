@@ -1,8 +1,8 @@
 package nns.scalatris.model
 
-import cats._
-import cats.data._
-import cats.syntax.all._
+import cats.*
+import cats.data.*
+import cats.syntax.all.*
 import indigo.*
 import indigo.shared.*
 import indigo.shared.events.KeyboardEvent

@@ -1,9 +1,8 @@
 package nns.scalatris
 
 import indigo.*
-import indigoextras.geometry.Vertex
+import indigo.scenes.*
 import nns.scalatris.assets.Grid
-import indigo.shared.scenegraph.Group
 
 final case class ViewModel(title: Group, stage: Group)
 

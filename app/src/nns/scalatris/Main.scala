@@ -1,14 +1,13 @@
 package nns.scalatris
 
-import cats.syntax.all._
+import cats.syntax.all.*
 import indigo.*
 import indigo.scenes.*
-import indigo.shared.datatypes.Rectangle
 import nns.scalatris.model.{GlobalModel, PieceDirection}
 import nns.scalatris.scenes.game.GameScene
+import nns.scalatris.scenes.title.TitleScene
 
 import scala.scalajs.js.annotation.JSExportTopLevel
-import nns.scalatris.scenes.title.TitleScene
 
 @JSExportTopLevel("IndigoGame")
 object Main extends IndigoGame[ViewConfig, StartUpData, GlobalModel, ViewModel]:
@@ -95,5 +94,3 @@ object Main extends IndigoGame[ViewConfig, StartUpData, GlobalModel, ViewModel]:
   )
 
   override def eventFilters: EventFilters = EventFilters.Restricted
-
-case object GameReset extends GlobalEvent

@@ -1,30 +1,28 @@
 package nns.scalatris.scenes.game
 
 import indigo.*
-import indigo.logger._
+import indigo.logger.*
 import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions.Boolean.*
 import nns.scalatris.model.PieceDirection.ControlScheme
 import nns.scalatris.model.{Piece, PieceDirection}
+import nns.scalatris.scenes.*
 import nns.scalatris.types.StageSize
 
 import scala.util.Random
 
-final private val TICK_FRAME_SECONDS = 0.1f
-final private val FALL_DOWN_SECONDS  = 1.0f
-
 final case class GameModel private (
+    override val tickDelay: Seconds,
+    override val lastUpdated: Seconds,
     piece: Either[Throwable, Piece],
     stageMap: Set[Piece],
     currentDirection: PieceDirection,
     controlScheme: Seq[ControlScheme],
-    tickDelay: Seconds,
     tickPieceDown: Seconds,
-    lastUpdated: Seconds,
     lastUpdatedPieceDown: Seconds,
-):
+) extends BaseSceneModel(tickDelay, lastUpdated):
 
   def dropOnePiece(
       currentTime: Seconds,
@@ -111,7 +109,7 @@ object GameModel:
     lastUpdatedPieceDown = Seconds.zero,
   )
 
-  def filterFilledPositionY(
+  private[game] def filterFilledPositionY(
       map: Set[Piece],
       stageWidth: Double,
   ): Set[Double] = map
@@ -120,5 +118,5 @@ object GameModel:
     .filter((_, y) => y == factorialWidth(stageWidth))
     .keySet
 
-  protected def factorialWidth(stageWidth: Double): Int =
+  private def factorialWidth(stageWidth: Double): Int =
     (1 to stageWidth.toInt).reduce(_ + _)

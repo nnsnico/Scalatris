@@ -1,12 +1,12 @@
 package nns.scalatris.scenes.game
 
-import cats.syntax.all._
+import cats.syntax.all.*
 import indigo.*
 import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions.Either.*
-import nns.scalatris.model.PieceDirection._
+import nns.scalatris.model.PieceDirection.*
 import nns.scalatris.model.{Piece, PieceDirection, PieceState}
 
 final case class GameController(gameModel: GameModel)

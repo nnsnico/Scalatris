@@ -1,14 +1,14 @@
 package nns.scalatris.scenes.game
 
-import cats.syntax.all._
-import indigo._
+import cats.syntax.all.*
+import indigo.*
 import indigo.shared.collections.Batch
 import indigo.shared.datatypes.Vector2
 import indigo.shared.scenegraph.TextBox
 import indigoextras.geometry.Vertex
 import nns.scalatris.ViewConfig
-import nns.scalatris.assets._
-import nns.scalatris.assets.{Font => GameFont}
+import nns.scalatris.assets.*
+import nns.scalatris.assets.Font as GameFont
 import nns.scalatris.model.{GlobalModel, Piece, PieceState}
 
 object GameView:
@@ -23,7 +23,7 @@ object GameView:
         .empty
         .addLayer(
           Layer(
-            BindingKey("ui"),
+            BindingKey("game-ui-main"),
             stage :: model
               .piece
               .fold(

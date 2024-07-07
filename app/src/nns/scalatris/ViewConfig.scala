@@ -1,6 +1,7 @@
 package nns.scalatris
 
 import indigo.*
+import indigo.scenes.*
 import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.types.GridSquareSize.*
 import nns.scalatris.types.{GridSize, GridSquareSize, StageSize}

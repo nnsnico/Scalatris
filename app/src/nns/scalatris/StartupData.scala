@@ -3,8 +3,8 @@ package nns.scalatris
 import indigo.*
 import indigo.shared.*
 import indigoextras.geometry.BoundingBox
-import nns.scalatris.assets.{Block, Font, _}
-import nns.scalatris.extensions.Option._
+import nns.scalatris.assets.*
+import nns.scalatris.extensions.Option.*
 
 final case class StartUpData(
     viewConfig: ViewConfig,
