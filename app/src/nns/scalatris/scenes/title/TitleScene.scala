@@ -1,11 +1,7 @@
 package nns.scalatris.scenes.title
 
-import indigo.scenes.{Scene, SceneContext, SceneName}
-import indigo.shared.Outcome
-import indigo.shared.events.{EventFilters, GlobalEvent}
-import indigo.shared.scenegraph.{Group, SceneUpdateFragment}
-import indigo.shared.subsystems.SubSystem
-import indigo.shared.utils.Lens
+import indigo.*
+import indigo.scenes.*
 import nns.scalatris.model.GlobalModel
 import nns.scalatris.scenes.game.GameModel
 import nns.scalatris.{StartUpData, ViewModel}
@@ -32,7 +28,11 @@ object TitleScene extends Scene[StartUpData, GlobalModel, ViewModel]:
   override def updateModel(
       context: SceneContext[StartUpData],
       model: SceneModel,
-  ): GlobalEvent => Outcome[SceneModel] = _ => Outcome(model)
+  ): GlobalEvent => Outcome[SceneModel] = TitleController.handleEvent(
+    titleModel = model,
+    gameTime = context.gameTime,
+    viewConfig = context.startUpData.viewConfig,
+  )
 
   override def updateViewModel(
       context: SceneContext[StartUpData],

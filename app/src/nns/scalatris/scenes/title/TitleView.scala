@@ -1,15 +1,14 @@
 package nns.scalatris.scenes.title
 
-import indigo._
-import indigo.shared.Outcome
-import indigo.shared.scenegraph.{Layer, SceneUpdateFragment}
-import nns.scalatris.assets.{Font => GameFont}
-import nns.scalatris.model.{Entry, Title}
+import indigo.*
+import indigo.scenes.*
+import nns.scalatris.assets.Font as GameFont
+import nns.scalatris.model.{Entry, Title, toText}
 import nns.scalatris.{ViewConfig, ViewModel}
-import indigoextras.geometry.BoundingBox
-import indigo.shared.datatypes.Vector2
 
 object TitleView:
+
+  private final val CURSOR_OFFSET = 10
 
   def update(
       model: TitleModel,
@@ -52,17 +51,16 @@ object TitleView:
       entries: NonEmptyList[Entry],
       viewConfig: ViewConfig,
   ): Batch[SceneNode] =
-    entries
-      .zipWithIndex
-      .map { case (entry, index) =>
-        GameFont
-          .toText(
-            text = entry.toString(),
-            x = viewConfig.horizontalCenter,
-            y = (150 + (index * viewConfig.gridSquareSize.toInt)),
-          )
-          .copy(
-            alignment = TextAlignment.Center,
-          )
-      }
-      .toBatch
+    entries.map { case entry =>
+      GameFont
+        .toText(
+          text = s"${entry.status.toText} ${entry.text}",
+          x = viewConfig.horizontalCenter - CURSOR_OFFSET,
+          y = (150 + (entry.index.value * viewConfig.gridSquareSize.toInt)),
+        )
+        .copy(
+          alignment = TextAlignment.Center,
+        )
+    }.toBatch
+
+

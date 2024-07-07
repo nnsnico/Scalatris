@@ -1,7 +1,20 @@
 package nns.scalatris.model
 
-opaque type Entry = String
+import nns.scalatris.scenes.title.model.Index
 
-object Entry:
-  def apply(s: String): Entry = s
+enum SelectStatus:
+  case Selecting
+  case NotSelected
 
+final case class Entry(
+    index: Index,
+    text: String,
+    status: SelectStatus,
+)
+
+extension (s: SelectStatus)
+
+  def toText: String = s match {
+    case SelectStatus.Selecting   => ">"
+    case SelectStatus.NotSelected => " "
+  }

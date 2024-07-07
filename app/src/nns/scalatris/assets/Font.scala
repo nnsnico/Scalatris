@@ -56,7 +56,6 @@ object Font extends Assets[Material.ImageEffects]:
     .addChar(FontChar("7", 79, 13, 9, 12))
     .addChar(FontChar("8", 90, 13, 10, 12))
     .addChar(FontChar("9", 102, 13, 9, 12))
-    .addChar(FontChar("?", 47, 26, 11, 12))
     .addChar(FontChar("!", 2, 0, 6, 12))
     .addChar(FontChar(".", 143, 0, 6, 12))
     .addChar(FontChar(",", 124, 0, 8, 12))
@@ -70,6 +69,9 @@ object Font extends Assets[Material.ImageEffects]:
     .addChar(FontChar("/", 150, 0, 9, 12))
     .addChar(FontChar(":", 2, 26, 5, 12))
     .addChar(FontChar("_", 42, 65, 9, 12))
+    .addChar(FontChar("<", 16, 26, 12, 12))
+    .addChar(FontChar(character = "=", x = 24, y = 26, width = 12, height = 12))
+    .addChar(FontChar(character = ">", x = 36, y = 26, width = 12, height = 12))
 
   def toText(text: String, x: Int, y: Int): Text[ImageEffects] = Text(
     text = text,
