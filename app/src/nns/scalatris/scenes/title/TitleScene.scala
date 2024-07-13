@@ -2,9 +2,8 @@ package nns.scalatris.scenes.title
 
 import indigo.*
 import indigo.scenes.*
-import nns.scalatris.model.GlobalModel
 import nns.scalatris.scenes.game.GameModel
-import nns.scalatris.{StartUpData, ViewModel}
+import nns.scalatris.{GlobalModel, StartUpData, ViewModel}
 
 object TitleScene extends Scene[StartUpData, GlobalModel, ViewModel]:
   type SceneViewModel = Group

@@ -1,11 +1,10 @@
-package nns.scalatris.model
+package nns.scalatris.scenes.game.model
 
 import cats.*
 import cats.data.*
 import cats.syntax.all.*
 import indigo.*
 import indigo.shared.*
-import indigo.shared.events.KeyboardEvent
 import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.ViewConfig
 import nns.scalatris.assets.{Block, BlockMaterial}

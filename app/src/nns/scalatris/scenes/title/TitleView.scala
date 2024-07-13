@@ -3,12 +3,12 @@ package nns.scalatris.scenes.title
 import indigo.*
 import indigo.scenes.*
 import nns.scalatris.assets.Font as GameFont
-import nns.scalatris.model.{Entry, Title, toText}
+import nns.scalatris.scenes.title.model.{Entry, Title, toText}
 import nns.scalatris.{ViewConfig, ViewModel}
 
 object TitleView:
 
-  private final val CURSOR_OFFSET = 10
+  final private val CURSOR_OFFSET = 10
 
   def update(
       model: TitleModel,
@@ -62,5 +62,3 @@ object TitleView:
           alignment = TextAlignment.Center,
         )
     }.toBatch
-
-

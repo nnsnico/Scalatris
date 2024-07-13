@@ -6,8 +6,8 @@ import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions.Either.*
-import nns.scalatris.model.PieceDirection.*
-import nns.scalatris.model.{Piece, PieceDirection, PieceState}
+import nns.scalatris.scenes.game.model.PieceDirection.*
+import nns.scalatris.scenes.game.model.{Piece, PieceDirection, PieceState}
 
 final case class GameController(gameModel: GameModel)
 

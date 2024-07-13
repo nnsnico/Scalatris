@@ -1,4 +1,4 @@
-package nns.scalatris.model
+package nns.scalatris.scenes.title.model
 
 opaque type Title = String
 

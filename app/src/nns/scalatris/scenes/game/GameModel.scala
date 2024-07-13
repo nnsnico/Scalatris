@@ -6,9 +6,9 @@ import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions.Boolean.*
-import nns.scalatris.model.PieceDirection.ControlScheme
-import nns.scalatris.model.{Piece, PieceDirection}
 import nns.scalatris.scenes.*
+import nns.scalatris.scenes.game.model.PieceDirection.ControlScheme
+import nns.scalatris.scenes.game.model.{Piece, PieceDirection}
 import nns.scalatris.types.StageSize
 
 import scala.util.Random

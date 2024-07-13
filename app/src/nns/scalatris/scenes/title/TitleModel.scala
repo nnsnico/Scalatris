@@ -9,14 +9,13 @@ import nns.scalatris.GameEvent
 import nns.scalatris.extension.NonEmptyList.toIndigoNel
 import nns.scalatris.extensions.Boolean.fold
 import nns.scalatris.extensions.Option.toOutcome
-import nns.scalatris.model.{Entry, SelectStatus, Title}
 import nns.scalatris.scenes.*
 import nns.scalatris.scenes.title.ChoicesExtension.{
   moveCursorToDown,
   moveCursorToUp,
   updateStatusByIndex,
 }
-import nns.scalatris.scenes.title.model.{CursorDirection, Index}
+import nns.scalatris.scenes.title.model.*
 
 final case class TitleModel private (
     override val tickDelay: Seconds,
@@ -31,17 +30,17 @@ final case class TitleModel private (
   def updateDirection(
       direction: CursorDirection,
   ): Outcome[TitleModel] = direction match
-    case CursorDirection.Up   =>
+    case CursorDirection.Up    =>
       copy(
         selectableItems = selectableItems.moveCursorToUp(selectingItem),
       ).some.toOutcome
-    case CursorDirection.Down =>
+    case CursorDirection.Down  =>
       copy(
         selectableItems = selectableItems.moveCursorToDown(selectingItem),
       ).some.toOutcome
     case CursorDirection.Enter =>
       this.some.toOutcome.addGlobalEvents(GameEvent.StartGame)
-    case _                    =>
+    case _                     =>
       this.some.toOutcome
 
 object TitleModel:

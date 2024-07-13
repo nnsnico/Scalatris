@@ -2,14 +2,11 @@ package nns.scalatris.scenes.game
 
 import cats.syntax.all.*
 import indigo.*
-import indigo.shared.collections.Batch
-import indigo.shared.datatypes.Vector2
-import indigo.shared.scenegraph.TextBox
+import indigo.shared.*
 import indigoextras.geometry.Vertex
 import nns.scalatris.ViewConfig
-import nns.scalatris.assets.*
 import nns.scalatris.assets.Font as GameFont
-import nns.scalatris.model.{GlobalModel, Piece, PieceState}
+import nns.scalatris.scenes.game.model.Piece
 
 object GameView:
 

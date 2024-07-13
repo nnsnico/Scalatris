@@ -1,4 +1,4 @@
-package nns.scalatris.model
+package nns.scalatris
 
 import indigo.*
 import indigo.shared.Outcome

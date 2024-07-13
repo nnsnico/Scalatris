@@ -1,4 +1,4 @@
-package nns.scalatris.model
+package nns.scalatris.scenes.title.model
 
 import nns.scalatris.scenes.title.model.Index
 
