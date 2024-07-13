@@ -69,3 +69,4 @@ object GameController:
             .getOrElse(PieceDirection.Neutral),
         ),
       )
+    case _                => Outcome(gameModel)

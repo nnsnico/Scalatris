@@ -35,3 +35,4 @@ object TitleController:
           .find(_ != CursorDirection.Neutral)
           .getOrElse(CursorDirection.Neutral),
       )
+    case _                   => Outcome(titleModel)
