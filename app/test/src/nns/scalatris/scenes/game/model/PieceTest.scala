@@ -1,9 +1,9 @@
-package nns.scalatris.model
+package nns.scalatris.scenes.game.model
 
-import cats._
-import cats.data._
-import cats.syntax.all._
-import munit._
+import cats.*
+import cats.data.*
+import cats.syntax.all.*
+import munit.*
 import nns.scalatris.ViewConfig
 import nns.scalatris.assets.{Block, BlockMaterial}
 import nns.scalatris.types.GridSquareSize

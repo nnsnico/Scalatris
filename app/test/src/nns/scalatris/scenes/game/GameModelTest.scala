@@ -5,7 +5,7 @@ import indigoextras.geometry.Vertex
 import munit.*
 import nns.scalatris.assets.Block.materials
 import nns.scalatris.assets.{Block, BlockMaterial}
-import nns.scalatris.model.{Piece, PieceKind, PieceState}
+import nns.scalatris.scenes.game.model.{Piece, PieceKind}
 import nns.scalatris.{StartUpData, ViewConfig}
 
 class GameModelTest extends munit.FunSuite {

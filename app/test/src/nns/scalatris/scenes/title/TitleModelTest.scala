@@ -2,9 +2,8 @@ package nns.scalatris.scenes.title
 
 import indigo.*
 import munit.*
-import nns.scalatris.model.{Entry, SelectStatus}
 import nns.scalatris.scenes.title.TitleModel
-import nns.scalatris.scenes.title.model.{CursorDirection, Index}
+import nns.scalatris.scenes.title.model.*
 
 class TitleModelTest extends FunSuite {
   private val target = TitleModel.init()
