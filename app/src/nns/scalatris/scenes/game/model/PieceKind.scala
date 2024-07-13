@@ -2,86 +2,81 @@ package nns.scalatris.scenes.game.model
 
 import indigo.*
 
-sealed class PieceKind(initPosition: Vertex, localPos: Seq[Vertex])
+enum PieceKind(val initPosition: Vertex, val localPos: Seq[Vertex]):
 
-object PieceKind:
+  case I
+      extends PieceKind(
+        initPosition = Vertex(1, 0),
+        localPos = Seq(
+          Vertex(-1.5, 0),
+          Vertex(-0.5, 0),
+          Vertex(0.5, 0),
+          Vertex(1.5, 0),
+        ),
+      )
 
-  val values: Seq[PieceKind] = Seq(
-    IKind(),
-    JKind(),
-    LKind(),
-    OKind(),
-    SKind(),
-    TKind(),
-    ZKind(),
-  )
+  case J
+      extends PieceKind(
+        initPosition = Vertex(0, 0),
+        localPos = Seq(
+          Vertex(-1.0, 0.5),
+          Vertex(0.0, 0.5),
+          Vertex(1.0, 0.5),
+          Vertex(1.0, -0.5),
+        ),
+      )
 
-  case class IKind(
-      initPosition: Vertex = Vertex(1, 0),
-      localPos: Seq[Vertex] = Seq(
-        Vertex(-1.5, 0),
-        Vertex(-0.5, 0),
-        Vertex(0.5, 0),
-        Vertex(1.5, 0),
-      ),
-  ) extends PieceKind(initPosition, localPos)
+  case L
+      extends PieceKind(
+        initPosition = Vertex(0, 0),
+        localPos = Seq(
+          Vertex(-1.0, 0.5),
+          Vertex(0.0, 0.5),
+          Vertex(1.0, 0.5),
+          Vertex(-1.0, -0.5),
+        ),
+      )
 
-  case class JKind(
-      initPosition: Vertex = Vertex(0, 0),
-      localPos: Seq[Vertex] = Seq(
-        Vertex(-1.0, 0.5),
-        Vertex(0.0, 0.5),
-        Vertex(1.0, 0.5),
-        Vertex(1.0, -0.5),
-      ),
-  ) extends PieceKind(initPosition, localPos)
+  case O
+      extends PieceKind(
+        initPosition = Vertex(0, 0),
+        localPos = Seq(
+          Vertex(-0.5, 0.5),
+          Vertex(0.5, 0.5),
+          Vertex(-0.5, -0.5),
+          Vertex(0.5, -0.5),
+        ),
+      )
 
-  case class LKind(
-      initPosition: Vertex = Vertex(0, 0),
-      localPos: Seq[Vertex] = Seq(
-        Vertex(-1.0, 0.5),
-        Vertex(0.0, 0.5),
-        Vertex(1.0, 0.5),
-        Vertex(-1.0, -0.5),
-      ),
-  ) extends PieceKind(initPosition, localPos)
+  case S
+      extends PieceKind(
+        initPosition = Vertex(0, 0),
+        localPos = Seq(
+          Vertex(0.0, 0.5),
+          Vertex(1.0, 0.5),
+          Vertex(-1.0, -0.5),
+          Vertex(0.0, -0.5),
+        ),
+      )
 
-  case class OKind(
-      initPosition: Vertex = Vertex(0, 0),
-      localPos: Seq[Vertex] = Seq(
-        Vertex(-0.5, 0.5),
-        Vertex(0.5, 0.5),
-        Vertex(-0.5, -0.5),
-        Vertex(0.5, -0.5),
-      ),
-  ) extends PieceKind(initPosition, localPos)
+  case T
+      extends PieceKind(
+        initPosition = Vertex(0, 0),
+        localPos = Seq(
+          Vertex(-1.0, 0.0),
+          Vertex(0.0, 0.0),
+          Vertex(1.0, 0.0),
+          Vertex(0.0, 1.0),
+        ),
+      )
 
-  case class SKind(
-      initPosition: Vertex = Vertex(0, 0),
-      localPos: Seq[Vertex] = Seq(
-        Vertex(0.0, 0.5),
-        Vertex(1.0, 0.5),
-        Vertex(-1.0, -0.5),
-        Vertex(0.0, -0.5),
-      ),
-  ) extends PieceKind(initPosition, localPos)
-
-  case class TKind(
-      initPosition: Vertex = Vertex(0, 0),
-      localPos: Seq[Vertex] = Seq(
-        Vertex(-1.0, 0.0),
-        Vertex(0.0, 0.0),
-        Vertex(1.0, 0.0),
-        Vertex(0.0, 1.0),
-      ),
-  ) extends PieceKind(initPosition, localPos)
-
-  case class ZKind(
-      initPosition: Vertex = Vertex(0, 0),
-      localPos: Seq[Vertex] = Seq(
-        Vertex(-1.0, 0.5),
-        Vertex(0.0, 0.5),
-        Vertex(0.0, -0.5),
-        Vertex(1.0, -0.5),
-      ),
-  ) extends PieceKind(initPosition, localPos)
+  case Z
+      extends PieceKind(
+        initPosition = Vertex(0, 0),
+        localPos = Seq(
+          Vertex(-1.0, 0.5),
+          Vertex(0.0, 0.5),
+          Vertex(0.0, -0.5),
+          Vertex(1.0, -0.5),
+        ),
+      )

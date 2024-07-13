@@ -50,7 +50,7 @@ class PieceTest extends munit.FunSuite {
     "create is `Left` when non match pattern with (PieceKind, BlockMaterial)",
   ) {
     val p = Piece.create(
-      PieceKind.IKind(),
+      PieceKind.I,
       BlockMaterial.Red(GridSquareSize(12)),
     )
 
@@ -61,7 +61,7 @@ class PieceTest extends munit.FunSuite {
     "create is `Right` when match pattern with (PieceKind, BlockMaterial)",
   ) {
     val p = Piece.create(
-      PieceKind.IKind(),
+      PieceKind.I,
       BlockMaterial.SkyBlue(GridSquareSize(12)),
     )
 
