@@ -3,11 +3,11 @@ package nns.scalatris.scenes.title
 import cats.data.{NonEmptyList, OptionT}
 import cats.syntax.all.*
 import indigo.*
-import indigo.NonEmptyList as IndigoNel
 import indigo.shared.Outcome
+import indigo.NonEmptyList as IndigoNel
+import mouse.all.*
 import nns.scalatris.GameEvent
 import nns.scalatris.extension.NonEmptyList.toIndigoNel
-import nns.scalatris.extensions.Boolean.fold
 import nns.scalatris.extensions.Option.toOutcome
 import nns.scalatris.scenes.*
 import nns.scalatris.scenes.title.ChoicesExtension.{
@@ -80,7 +80,7 @@ private object ChoicesExtension:
             if (selectingIndex.dec.value >= items.first.index.value) {
               selectingIndex.dec
             } else items.first.index
-          nextIndex      <- (index == i).fold(i.some, none)
+          nextIndex      <- (index == i).option(i)
           updated        <- items.updateStatusByIndex(
                               nextIndex,
                               SelectStatus.Selecting,
@@ -97,7 +97,7 @@ private object ChoicesExtension:
             if (selectingIndex.inc.value < items.last.index.value) {
               selectingIndex.inc
             } else items.last.index
-          nextIndex      <- (index == i).fold(i.some, none)
+          nextIndex      <- (index == i).option(i)
           updated        <- items.updateStatusByIndex(
                               nextIndex,
                               SelectStatus.Selecting,

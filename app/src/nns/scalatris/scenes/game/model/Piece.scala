@@ -5,10 +5,9 @@ import cats.data.*
 import cats.syntax.all.*
 import indigo.*
 import indigo.shared.*
-import indigoextras.geometry.{BoundingBox, Vertex}
+import mouse.all.*
 import nns.scalatris.ViewConfig
 import nns.scalatris.assets.{Block, BlockMaterial}
-import nns.scalatris.extensions.Boolean.*
 import nns.scalatris.types.StageSize
 
 final case class Piece(

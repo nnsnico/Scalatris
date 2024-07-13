@@ -1,13 +1,12 @@
 package nns.scalatris.scenes.title
 
 import indigo.*
-import indigo.shared.Outcome
-import nns.scalatris.ViewConfig
-import nns.scalatris.extensions.Option.toOutcome
-import nns.scalatris.scenes.title.model.CursorDirection
-import nns.scalatris.GameEvent
 import indigo.scenes.SceneEvent.JumpTo
+import indigo.shared.Outcome
+import nns.scalatris.extensions.Option.toOutcome
 import nns.scalatris.scenes.game.GameScene
+import nns.scalatris.scenes.title.model.CursorDirection
+import nns.scalatris.{GameEvent, ViewConfig}
 
 final case class TitleController(viewConfig: ViewConfig, titleModel: TitleModel)
 

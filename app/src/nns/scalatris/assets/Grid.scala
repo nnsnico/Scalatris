@@ -3,7 +3,6 @@ package nns.scalatris.assets
 import indigo.*
 import indigo.logger.*
 import indigo.shared.*
-import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.types.GridSquareSize.*
 import nns.scalatris.types.{GridSquareSize, StageSize}
 

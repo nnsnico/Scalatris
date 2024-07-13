@@ -1,7 +1,7 @@
 package nns.scalatris.scenes.game
 
-import indigo.shared.{Outcome, Startup}
-import indigoextras.geometry.Vertex
+import indigo.*
+import indigo.shared.*
 import munit.*
 import nns.scalatris.assets.Block.materials
 import nns.scalatris.assets.{Block, BlockMaterial}

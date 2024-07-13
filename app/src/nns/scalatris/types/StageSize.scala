@@ -1,6 +1,6 @@
 package nns.scalatris.types
 
-import indigoextras.geometry.BoundingBox
+import indigo.*
 
 opaque type StageSize = BoundingBox
 

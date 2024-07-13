@@ -2,7 +2,6 @@ package nns.scalatris.scenes.game
 
 import cats.syntax.all.*
 import indigo.*
-import indigoextras.geometry.{BoundingBox, Vertex}
 import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions.Either.*

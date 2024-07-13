@@ -15,7 +15,7 @@ class PieceTest extends munit.FunSuite {
     "init is `Left` when it is out of index",
   ) {
     val materials = Block.materials(viewConfig.gridSquareSize)
-    val p = Piece.init(materials, 999)
+    val p         = Piece.init(materials, 999)
 
     assert(p.isLeft)
   }
@@ -24,7 +24,7 @@ class PieceTest extends munit.FunSuite {
     "init is `Right` when it is within index",
   ) {
     val materials = Block.materials(viewConfig.gridSquareSize)
-    val p = Piece.init(materials, 0)
+    val p         = Piece.init(materials, 0)
 
     assert(p.isRight)
   }

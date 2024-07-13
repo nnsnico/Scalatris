@@ -2,7 +2,6 @@ package nns.scalatris
 
 import indigo.*
 import indigo.shared.*
-import indigoextras.geometry.BoundingBox
 import nns.scalatris.assets.*
 import nns.scalatris.extensions.Option.*
 

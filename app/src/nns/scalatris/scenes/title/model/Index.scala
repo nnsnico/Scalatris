@@ -1,7 +1,5 @@
 package nns.scalatris.scenes.title.model
 
-import nns.scalatris.extensions.Boolean.fold
-
 opaque type Index = Int
 
 object Index:

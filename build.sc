@@ -1,35 +1,35 @@
+import com.goyeau.mill.scalafix.ScalafixModule
 import mill._
-import mill.scalalib._
 import mill.scalajslib._
 import mill.scalajslib.api._
-// mill-scalafix
-import $ivy.`com.goyeau::mill-scalafix::0.2.9`
-import com.goyeau.mill.scalafix.ScalafixModule
-// indigo
-import $ivy.`io.indigoengine::mill-indigo:0.14.0`, millindigo._
+import mill.scalalib._
+import millindigo._
+
+import $ivy.`com.goyeau::mill-scalafix::0.3.1`
+import $ivy.`io.indigoengine::mill-indigo:0.15.2`
 
 object app extends ScalaJSModule with MillIndigo with ScalafixModule {
-  def scalaVersion   = "3.2.0"
-  def scalaJSVersion = "1.11.0"
+  def scalaVersion   = "3.3.0"
+  def scalaJSVersion = "1.14.0"
 
-  val gameAssetsDirectory: os.Path = os.pwd / "assets"
-  val showCursor: Boolean          = true
-  val title: String                = "Scalatris"
+  val indigoOptions: IndigoOptions = IndigoOptions
+    .defaults
+    .withTitle("Scalatris")
+    .withWindowWidth(720)
+    .withWindowHeight(500)
+    .cursorVisible
+    .electronLimitsFrameRate
+    .withElectronInstallType(ElectronInstall.Global)
+    .withBackgroundColor("black")
+    .withAssetDirectory(os.RelPath.rel / "assets")
 
-  val windowStartWidth: Int =
-    720 // Width of Electron window, used with `indigoRun`.
-
-  val windowStartHeight: Int =
-    500 // Height of Electron window, used with `indigoRun`.
-
-  val disableFrameRateLimit: Boolean = false
-  val backgroundColor: String        = "black"
-  val electronInstall                = indigoplugin.ElectronInstall.Global
+  val indigoGenerators: IndigoGenerators = IndigoGenerators("nns.scalatris")
+    .listAssets("Assets", indigoOptions.assets)
+    .generateConfig("DefaultConfig", indigoOptions)
 
   def buildGame() = T.command {
     T {
       compile()
-      fastOpt()
       fastLinkJS()
       indigoBuild()()
     }
@@ -38,36 +38,30 @@ object app extends ScalaJSModule with MillIndigo with ScalafixModule {
   def runGame() = T.command {
     T {
       compile()
-      fastOpt()
       fastLinkJS()
       indigoRun()()
     }
   }
 
-  val indigoVersion = "0.14.0"
-  val catsVersion   = "2.9.0"
-  val mouseVersion  = "1.2.1"
+  val indigoVersion = "0.15.2"
+  val catsVersion   = "2.10.0"
+  val mouseVersion  = "1.2.2"
 
   def ivyDeps = Agg(
     ivy"io.indigoengine::indigo::$indigoVersion",
     ivy"io.indigoengine::indigo-extras::$indigoVersion",
     ivy"io.indigoengine::indigo-json-circe::$indigoVersion",
-    ivy"org.typelevel::cats-core:$catsVersion",
-    ivy"org.typelevel::mouse:$mouseVersion",
+    ivy"org.typelevel::cats-core::$catsVersion",
+    ivy"org.typelevel::mouse::$mouseVersion",
   )
 
-  val scalaFixOrganizeImportsVersion = "0.6.0"
-
-  def scalafixIvyDeps = Agg(
-    ivy"com.github.liancheng::organize-imports:$scalaFixOrganizeImportsVersion",
-  )
-
-  object test extends Tests with TestModule.Munit {
+  object test extends ScalaJSTests with TestModule.Munit {
     val munitVersion = "0.7.29"
 
     def ivyDeps = Agg(
-      ivy"org.scalameta::munit::$munitVersion"
+      ivy"org.scalameta::munit::$munitVersion",
     )
+
   }
 
 }

@@ -1,6 +1,6 @@
 package nns.scalatris.scenes.game.model
 
-import indigoextras.geometry.Vertex
+import indigo.*
 
 sealed class PieceKind(initPosition: Vertex, localPos: Seq[Vertex])
 

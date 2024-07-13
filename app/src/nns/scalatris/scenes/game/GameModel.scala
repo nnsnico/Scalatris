@@ -2,10 +2,9 @@ package nns.scalatris.scenes.game
 
 import indigo.*
 import indigo.logger.*
-import indigoextras.geometry.{BoundingBox, Vertex}
+import mouse.all.*
 import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
-import nns.scalatris.extensions.Boolean.*
 import nns.scalatris.scenes.*
 import nns.scalatris.scenes.game.model.PieceDirection.ControlScheme
 import nns.scalatris.scenes.game.model.{Piece, PieceDirection}
