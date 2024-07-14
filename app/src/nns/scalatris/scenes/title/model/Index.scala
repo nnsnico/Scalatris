@@ -7,6 +7,6 @@ object Index:
 
   extension (i: Index)
     def value: Int               = i
-    def dec: Index               = i - 1
-    def inc: Index               = i + 1
-    def ==(source: Int): Boolean = i == source
+    inline def dec: Index        = i - 1
+    inline def inc: Index        = i + 1
+    inline def ==(source: Int): Boolean = i == source

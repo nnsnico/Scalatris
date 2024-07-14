@@ -3,18 +3,13 @@ package nns.scalatris.scenes.title
 import cats.data.{NonEmptyList, OptionT}
 import cats.syntax.all.*
 import indigo.*
-import indigo.shared.Outcome
 import indigo.NonEmptyList as IndigoNel
 import mouse.all.*
 import nns.scalatris.GameEvent
 import nns.scalatris.extension.NonEmptyList.toIndigoNel
 import nns.scalatris.extensions.Option.toOutcome
 import nns.scalatris.scenes.*
-import nns.scalatris.scenes.title.ChoicesExtension.{
-  moveCursorToDown,
-  moveCursorToUp,
-  updateStatusByIndex,
-}
+import nns.scalatris.scenes.title.extensions.ChoicesExtension.*
 import nns.scalatris.scenes.title.model.*
 
 final case class TitleModel private (
@@ -67,47 +62,3 @@ object TitleModel:
     title = Title("Scalatris"),
     selectableItems = selectableItems,
   )
-
-private object ChoicesExtension:
-
-  extension (items: IndigoNel[Entry])
-
-    def moveCursorToUp(selectingItem: Option[Entry]): IndigoNel[Entry] =
-      items.map { case entry @ Entry(i, _, s) =>
-        (for {
-          selectingIndex <- selectingItem.map(_.index)
-          index           =
-            if (selectingIndex.dec.value >= items.first.index.value) {
-              selectingIndex.dec
-            } else items.first.index
-          nextIndex      <- (index == i).option(i)
-          updated        <- items.updateStatusByIndex(
-                              nextIndex,
-                              SelectStatus.Selecting,
-                            )
-        } yield updated)
-          .getOrElse(entry.copy(status = SelectStatus.NotSelected))
-      }
-
-    def moveCursorToDown(selectingItem: Option[Entry]): IndigoNel[Entry] =
-      items.map { case entry @ Entry(i, _, s) =>
-        (for {
-          selectingIndex <- selectingItem.map(_.index)
-          index           =
-            if (selectingIndex.inc.value < items.last.index.value) {
-              selectingIndex.inc
-            } else items.last.index
-          nextIndex      <- (index == i).option(i)
-          updated        <- items.updateStatusByIndex(
-                              nextIndex,
-                              SelectStatus.Selecting,
-                            )
-        } yield updated)
-          .getOrElse(entry.copy(status = SelectStatus.NotSelected))
-      }
-
-    def updateStatusByIndex(i: Index, status: SelectStatus): Option[Entry] =
-      for {
-        targetIndex  <- items.find(_.index == i)
-        toggledStatus = targetIndex.copy(status = status)
-      } yield toggledStatus
