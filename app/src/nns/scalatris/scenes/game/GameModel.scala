@@ -109,7 +109,9 @@ object GameModel:
   ): GameModel = GameModel(
     tickDelay = tickDelay,
     lastUpdated = lastUpdated,
+    // take a Piece from initialized flow
     currentPiece = pieceFlow.map(_.head),
+    // set the flow removed a first element
     pieceFlow = pieceFlow.map(_.tail),
     stageMap = stageMap,
     currentDirection = currentDirection,
