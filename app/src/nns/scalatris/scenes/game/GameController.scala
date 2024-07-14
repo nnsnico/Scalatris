@@ -15,11 +15,10 @@ object GameController:
   def init(
       viewConfig: ViewConfig,
       blockMaterial: Seq[BlockMaterial],
-  ): GameController = GameController(
-    gameModel = GameModel.init(
-      viewConfig = viewConfig,
-      blockMaterial = blockMaterial,
-    ),
+  ): Either[Throwable, GameController] = for {
+    gameModelOrThrow <- GameModel.init(viewConfig, blockMaterial)
+  } yield GameController(
+    gameModel = gameModelOrThrow,
   )
 
   def handleEvent(
@@ -40,24 +39,21 @@ object GameController:
         ),
       )
     case FrameTick        =>
-      gameModel
-        .currentPiece
-        .map(p =>
-          p.state match {
-            case PieceState.Falling =>
-              gameModel.updatePiece(
-                currentTime = gameTime.running.some,
-                stageSize = viewConfig.stageSize,
-              )
-            case PieceState.Landed  =>
-              gameModel.putPieceOnStage(
-                stageSize = viewConfig.stageSize,
-                blockMaterial = blockMaterial,
-                putPiece = p,
-              )
-          },
-        )
-        .toOutcome
+      gameModel.currentPiece.state match {
+        case PieceState.Falling =>
+          Outcome(
+            gameModel.updatePiece(
+              currentTime = gameTime.running.some,
+              stageSize = viewConfig.stageSize,
+            ),
+          )
+        case PieceState.Landed  =>
+          gameModel.putPieceOnStage(
+            stageSize = viewConfig.stageSize,
+            blockMaterial = blockMaterial,
+            putPiece = gameModel.currentPiece,
+          )
+      }
     case e: KeyboardEvent =>
       Outcome(
         gameModel.updateDirection(

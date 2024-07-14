@@ -43,7 +43,6 @@ object TitleModel:
   private val selectableItems = NonEmptyList
     .of(
       ("start", SelectStatus.Selecting),
-      ("exit", SelectStatus.NotSelected),
     )
     .zipWithIndex
     .map { case ((title, status), i) =>

@@ -18,9 +18,11 @@ object GlobalModel:
   def init(
       viewConfig: ViewConfig,
       blockMaterial: Seq[BlockMaterial],
-  ): GlobalModel = GlobalModel(
+  ): Either[Throwable, GlobalModel] = for {
+    gameConOrThrow <- GameController.init(viewConfig, blockMaterial)
+  } yield GlobalModel(
     titleController = TitleController.init(viewConfig),
-    gameController = GameController.init(viewConfig, blockMaterial),
+    gameController = gameConOrThrow,
     gameState = GameState.Running,
   )
 

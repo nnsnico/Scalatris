@@ -3,6 +3,7 @@ package nns.scalatris
 import cats.syntax.all.*
 import indigo.*
 import indigo.scenes.*
+import nns.scalatris.extensions.Either.toOutcome
 import nns.scalatris.scenes.game.GameScene
 import nns.scalatris.scenes.title.TitleScene
 
@@ -52,12 +53,12 @@ object Main extends IndigoGame[ViewConfig, StartUpData, GlobalModel, ViewModel]:
 
   // initialize global game model
   override def initialModel(startupData: StartUpData): Outcome[GlobalModel] =
-    Outcome(
-      GlobalModel.init(
+    GlobalModel
+      .init(
         viewConfig = startupData.viewConfig,
         blockMaterial = startupData.staticAssets.blockMaterial,
-      ),
-    )
+      )
+      .toOutcome
 
   // on update global game model
   override def updateModel(

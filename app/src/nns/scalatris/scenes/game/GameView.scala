@@ -20,16 +20,10 @@ object GameView:
         .addLayer(
           Layer(
             BindingKey("game-ui-main"),
-            stage :: model
-              .currentPiece
-              .fold(
-                e => drawDebugLog(viewConfig.viewport, e.toString),
-                v =>
-                  drawPiece(
-                    piece = v,
-                    stageSizeOffSet = viewConfig.stageSize.position,
-                  ),
-              ) ++ Batch.fromSet(
+            stage :: drawPiece(
+              piece = model.currentPiece,
+              stageSizeOffSet = viewConfig.stageSize.position,
+            ) ++ Batch.fromSet(
               model
                 .stageMap
                 .flatMap(p => drawPiece(p, viewConfig.stageSize.position).toSet),
