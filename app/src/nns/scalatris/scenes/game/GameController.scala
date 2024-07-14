@@ -41,7 +41,7 @@ object GameController:
       )
     case FrameTick        =>
       gameModel
-        .piece
+        .currentPiece
         .map(p =>
           p.state match {
             case PieceState.Falling =>

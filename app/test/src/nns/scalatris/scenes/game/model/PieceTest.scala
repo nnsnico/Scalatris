@@ -12,21 +12,21 @@ class PieceTest extends munit.FunSuite {
   val viewConfig = ViewConfig.default
 
   test(
-    "init is `Left` when it is out of index",
+    "createPieceFlow is `Right` when given materials and pieces are same length",
   ) {
     val materials = Block.materials(viewConfig.gridSquareSize)
-    val p         = Piece.init(materials, 999)
+    val p         = Piece.createPieceFlow(materials)
 
-    assert(p.isLeft)
+    assert(p.isRight)
   }
 
   test(
-    "init is `Right` when it is within index",
+    "createPieceFlow is `Left` when given material is empty",
   ) {
-    val materials = Block.materials(viewConfig.gridSquareSize)
-    val p         = Piece.init(materials, 0)
+    val materials = Seq.empty
+    val p         = Piece.createPieceFlow(materials)
 
-    assert(p.isRight)
+    assert(p.isLeft)
   }
 
   test(
@@ -49,7 +49,7 @@ class PieceTest extends munit.FunSuite {
   test(
     "create is `Left` when non match pattern with (PieceKind, BlockMaterial)",
   ) {
-    val p = Piece.create(
+    val p = Piece.createPiece(
       PieceKind.I,
       BlockMaterial.Red(GridSquareSize(12)),
     )
@@ -60,7 +60,7 @@ class PieceTest extends munit.FunSuite {
   test(
     "create is `Right` when match pattern with (PieceKind, BlockMaterial)",
   ) {
-    val p = Piece.create(
+    val p = Piece.createPiece(
       PieceKind.I,
       BlockMaterial.SkyBlue(GridSquareSize(12)),
     )

@@ -21,7 +21,7 @@ object GameView:
           Layer(
             BindingKey("game-ui-main"),
             stage :: model
-              .piece
+              .currentPiece
               .fold(
                 e => drawDebugLog(viewConfig.viewport, e.toString),
                 v =>

@@ -19,27 +19,27 @@ class GameModelTest extends munit.FunSuite {
     val map: Set[Piece] =
       Set(
         Piece
-          .create(PieceKind.O, material)
+          .createPiece(PieceKind.O, material)
           .toOption
           .get
           .copy(position = Vertex(0, 0)),
         Piece
-          .create(PieceKind.O, material)
+          .createPiece(PieceKind.O, material)
           .toOption
           .get
           .copy(position = Vertex(2, 0)),
         Piece
-          .create(PieceKind.O, material)
+          .createPiece(PieceKind.O, material)
           .toOption
           .get
           .copy(position = Vertex(4, 0)),
         Piece
-          .create(PieceKind.O, material)
+          .createPiece(PieceKind.O, material)
           .toOption
           .get
           .copy(position = Vertex(6, 0)),
         Piece
-          .create(PieceKind.O, material)
+          .createPiece(PieceKind.O, material)
           .toOption
           .get
           .copy(position = Vertex(8, 0)),

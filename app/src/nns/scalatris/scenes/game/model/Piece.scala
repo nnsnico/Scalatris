@@ -133,23 +133,26 @@ final case class Piece(
 
 object Piece:
 
-  def init(
+  def createPieceFlow(
       blockMaterials: Seq[BlockMaterial],
-      index: Int,
-  ): Either[Throwable, Piece] =
-    createFromMaterials(blockMaterials)
-      .get(index)
-      .toRight(Exception("Piece#init: Failed to initial Piece"))
+  ): Either[Throwable, Seq[Piece]] = for {
+    piece <- Either.right(createFromMaterials(blockMaterials).collectRight)
+    cond  <- Either.cond(
+               piece.nonEmpty && piece.length == blockMaterials.length,
+               right = piece,
+               left = Exception("Pieces are empty or missing"),
+             )
+  } yield piece
 
-  def createFromMaterials(
+  private[model] def createFromMaterials(
       materials: Seq[BlockMaterial],
   ): EitherT[Seq, Throwable, Piece] = for {
     kind       <- EitherT.right(PieceKind.values.toSeq)
     material   <- EitherT.right(materials)
-    maybePiece <- EitherT.fromEither(create(kind, material))
+    maybePiece <- EitherT.fromEither(createPiece(kind, material))
   } yield maybePiece
 
-  def create(
+  private[game] def createPiece(
       kind: PieceKind,
       material: BlockMaterial,
   ): Either[Throwable, Piece] =
@@ -204,4 +207,4 @@ object Piece:
           localPosition = kind.localPos,
         ).asRight
       case _                                              =>
-        Left(Exception("Piece#create: Failed to create piece"))
+        Exception("Piece#create: Failed to create piece").asLeft
