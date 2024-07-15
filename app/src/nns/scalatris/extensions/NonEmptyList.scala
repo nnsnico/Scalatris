@@ -7,7 +7,7 @@ object NonEmptyList:
 
   extension [T](nel: NonEmptyList[T])
 
-    def toIndigoNel(): IndigoNel[T] = IndigoNel(
+    def toIndigoNel: IndigoNel[T] = IndigoNel(
       nel.head,
       nel.tail,
     )

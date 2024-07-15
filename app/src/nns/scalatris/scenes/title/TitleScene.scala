@@ -7,15 +7,19 @@ import nns.scalatris.{GlobalModel, StartUpData, ViewModel}
 
 object TitleScene extends Scene[StartUpData, GlobalModel, ViewModel]:
   type SceneViewModel = Group
-  type SceneModel     = TitleModel
+  type SceneModel     = TitleController
 
   override def name: SceneName = SceneName("title")
 
   override def modelLens: Lens[GlobalModel, SceneModel] = Lens(
-    _.titleController.titleModel,
-    (globalModel, model) =>
+    _.titleController,
+    (globalModel, controller) =>
       globalModel.copy(
-        titleController = globalModel.titleController.copy(titleModel = model),
+        titleController = globalModel
+          .titleController
+          .copy(
+            titleModel = controller.titleModel,
+          ),
       ),
   )
 
@@ -26,25 +30,24 @@ object TitleScene extends Scene[StartUpData, GlobalModel, ViewModel]:
 
   override def updateModel(
       context: SceneContext[StartUpData],
-      model: SceneModel,
-  ): GlobalEvent => Outcome[SceneModel] = TitleController.handleEvent(
-    titleModel = model,
+      controller: SceneModel,
+  ): GlobalEvent => Outcome[SceneModel] = controller.handleEvent(
     gameTime = context.gameTime,
     viewConfig = context.startUpData.viewConfig,
   )
 
   override def updateViewModel(
       context: SceneContext[StartUpData],
-      model: SceneModel,
+      contoller: SceneModel,
       viewModel: SceneViewModel,
   ): GlobalEvent => Outcome[SceneViewModel] = _ => Outcome(viewModel)
 
   override def present(
       context: SceneContext[StartUpData],
-      model: SceneModel,
+      controller: SceneModel,
       viewModel: SceneViewModel,
   ): Outcome[SceneUpdateFragment] = TitleView.update(
-    model = model,
+    model = controller.titleModel,
     viewConfig = context.startUpData.viewConfig,
   )
 

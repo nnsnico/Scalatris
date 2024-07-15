@@ -1,12 +1,36 @@
 package nns.scalatris.scenes.title
 
+import cats.data.NonEmptyList
 import indigo.*
+import indigo.NonEmptyList as IndigoNel
 import munit.*
+import nns.scalatris.extension.NonEmptyList.toIndigoNel
 import nns.scalatris.scenes.title.TitleModel
 import nns.scalatris.scenes.title.model.*
+import nns.scalatris.scenes.title.model.CursorDirection.ControlScheme
 
 class TitleModelTest extends FunSuite {
-  private val target = TitleModel.init()
+
+  private val target = TitleModel(
+    tickDelay = Seconds.zero,
+    lastUpdated = Seconds.zero,
+    controlScheme = Seq(
+      CursorDirection.moveUpKeys,
+      CursorDirection.moveDownKeys,
+      CursorDirection.enterKeys,
+    ),
+    title = Title("Scalatris"),
+    selectableItems = NonEmptyList
+      .of(
+        ("start", SelectStatus.Selecting),
+        ("exit", SelectStatus.NotSelected),
+      )
+      .zipWithIndex
+      .map { case ((title, status), i) =>
+        Entry(Index(i), title, status)
+      }
+      .toIndigoNel,
+  )
 
   test(
     "updateDirection should returned TitleModel with updated direction",

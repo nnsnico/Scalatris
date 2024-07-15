@@ -12,7 +12,7 @@ import nns.scalatris.scenes.*
 import nns.scalatris.scenes.title.extensions.ChoicesExtension.*
 import nns.scalatris.scenes.title.model.*
 
-final case class TitleModel private (
+final case class TitleModel private[title] (
     override val tickDelay: Seconds,
     override val lastUpdated: Seconds,
     controlScheme: Seq[CursorDirection.ControlScheme],
@@ -48,7 +48,7 @@ object TitleModel:
     .map { case ((title, status), i) =>
       Entry(Index(i), title, status)
     }
-    .toIndigoNel()
+    .toIndigoNel
 
   def init(): TitleModel = TitleModel(
     tickDelay = Seconds(TICK_FRAME_SECONDS),

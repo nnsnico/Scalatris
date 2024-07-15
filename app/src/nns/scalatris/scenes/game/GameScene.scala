@@ -2,23 +2,25 @@ package nns.scalatris.scenes.game
 
 import indigo.*
 import indigo.scenes.*
-import indigo.shared.Outcome
-import indigo.shared.scenegraph.Graphic
 import nns.scalatris.assets.*
 import nns.scalatris.{GlobalModel, StartUpData, ViewModel}
 
 object GameScene extends Scene[StartUpData, GlobalModel, ViewModel]:
   type SceneViewModel = Group
-  type SceneModel     = GameModel
+  type SceneModel     = GameController
 
   override def name: SceneName = SceneName("scalatris")
 
-  override def modelLens: Lens[GlobalModel, GameModel] =
+  override def modelLens: Lens[GlobalModel, SceneModel] =
     Lens(
-      _.gameController.gameModel,
-      (globalModel, model) =>
+      _.gameController,
+      (globalModel, controller) =>
         globalModel.copy(
-          gameController = globalModel.gameController.copy(gameModel = model),
+          gameController = globalModel
+            .gameController
+            .copy(
+              gameModel = controller.gameModel,
+            ),
         ),
     )
 
@@ -29,10 +31,9 @@ object GameScene extends Scene[StartUpData, GlobalModel, ViewModel]:
 
   override def updateModel(
       context: SceneContext[StartUpData],
-      model: GameModel,
-  ): GlobalEvent => Outcome[GameModel] =
-    GameController.handleEvent(
-      gameModel = model,
+      controller: SceneModel,
+  ): GlobalEvent => Outcome[SceneModel] =
+    controller.handleEvent(
       gameTime = context.gameTime,
       blockMaterial = context.startUpData.staticAssets.blockMaterial,
       viewConfig = context.startUpData.viewConfig,
@@ -40,18 +41,18 @@ object GameScene extends Scene[StartUpData, GlobalModel, ViewModel]:
 
   override def updateViewModel(
       context: SceneContext[StartUpData],
-      model: GameModel,
+      controller: SceneModel,
       viewModel: Group,
   ): GlobalEvent => Outcome[SceneViewModel] = _ => Outcome(viewModel)
 
   override def present(
       context: SceneContext[StartUpData],
-      model: GameModel,
+      controller: SceneModel,
       viewModel: Group,
   ): Outcome[SceneUpdateFragment] =
     GameView.update(
       viewConfig = context.startUpData.viewConfig,
-      model = model,
+      model = controller.gameModel,
       stage = viewModel,
     )
 
