@@ -41,21 +41,3 @@ object TitleController:
     titleModel = TitleModel.init(),
   )
 
-  // def handleEvent(
-  //     titleModel: TitleModel,
-  //     gameTime: GameTime,
-  //     viewConfig: ViewConfig,
-  // ): GlobalEvent => Outcome[TitleModel] =
-  //   case GameEvent.StartGame =>
-  //     Outcome(titleModel).addGlobalEvents(JumpTo(GameScene.name))
-  //   case FrameTick           =>
-  //     Outcome(titleModel)
-  //   case e: KeyboardEvent    =>
-  //     titleModel.updateDirection(
-  //       direction = titleModel
-  //         .controlScheme
-  //         .map(_.toCursorDirection(e))
-  //         .find(_ != CursorDirection.Neutral)
-  //         .getOrElse(CursorDirection.Neutral),
-  //     )
-  //   case _                   => Outcome(titleModel)
