@@ -5,9 +5,11 @@ import cats.data.*
 import cats.syntax.all.*
 import indigo.*
 import indigo.shared.*
+import indigo.shared.geometry.Vertex
 import mouse.all.*
 import nns.scalatris.ViewConfig
 import nns.scalatris.assets.{Block, BlockMaterial}
+import nns.scalatris.extensions.CollectionExt.{maxOr, minOr}
 import nns.scalatris.types.StageSize
 
 final case class Piece(
@@ -32,10 +34,11 @@ final case class Piece(
         val nextPosition = currentPosition.map(_ - Vertex(1, 0))
         copy(
           position = (
-            nextPosition.minBy(_.x).x >= 0 && checkForPiecePlacement(
-              placedPieces,
-              nextPosition,
-            )
+            nextPosition.minOr(_.x, Vertex(-1)).x >= 0 &&
+              checkForPiecePlacement(
+                placedPieces,
+                nextPosition,
+              )
           ).fold(
             position - Vertex(1, 0),
             position,
@@ -45,7 +48,7 @@ final case class Piece(
         val nextPosition = currentPosition.map(pos => pos + Vertex(1, 0))
         copy(
           position = (
-            nextPosition.map(_.x).max < stageSize.width &&
+            nextPosition.maxOr(_.x, Vertex(-1)).x < stageSize.width &&
               checkForPiecePlacement(placedPieces, nextPosition)
           ).fold(
             position + Vertex(1, 0),
@@ -56,9 +59,9 @@ final case class Piece(
         val nextPosition = rotateLeft.map(convertToStagePosition(_, position))
         this.copy(
           localPosition = (
-            nextPosition.minBy(_.x).x >= 0 &&
-              nextPosition.maxBy(_.x).x < stageSize.width &&
-              nextPosition.maxBy(_.y).y < stageSize.height &&
+            nextPosition.minOr(_.x, Vertex(-1)).x >= 0 &&
+              nextPosition.maxOr(_.x, Vertex(-1)).x < stageSize.width &&
+              nextPosition.maxOr(_.y, Vertex(-1)).y < stageSize.height &&
               checkForPiecePlacement(placedPieces, nextPosition)
           ).fold(
             rotateLeft,
@@ -112,7 +115,7 @@ final case class Piece(
   ): Piece =
     val nextPosition = currentPosition.map(_ + Vertex(0, 1))
     (
-      nextPosition.maxBy(_.y).y < stageSize.height &&
+      nextPosition.maxOr(_.y, Vertex(-1)).y < stageSize.height &&
         checkForPiecePlacement(placedPieces, nextPosition)
     ).fold(
       copy(position = position + Vertex(0, 1)),

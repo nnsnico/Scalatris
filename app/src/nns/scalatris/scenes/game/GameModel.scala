@@ -24,7 +24,7 @@ final case class GameModel private (
     controlScheme: Seq[ControlScheme],
     tickPieceDown: Seconds,
     lastUpdatedPieceDown: Seconds,
-) extends BaseSceneModel(tickDelay, lastUpdated):
+) extends BaseSceneModel:
 
   def dropOnePiece(
       currentTime: Seconds,
@@ -40,10 +40,9 @@ final case class GameModel private (
 
   def updateDirection(
       direction: PieceDirection,
-      lastUpdated: Seconds = Seconds.zero,
   ): GameModel = copy(
     currentDirection = direction,
-    lastUpdated = lastUpdated,
+    lastUpdated = Seconds.zero,
   )
 
   def updatePiece(
@@ -67,7 +66,7 @@ final case class GameModel private (
       pieceFlow
         .headOption
         .toRight(Exception("Unexpected Error: Pieces are empty in flow"))
-    nextFlow      <- pieceFlow.tail.asRight
+    nextFlow      <- pieceFlow.drop(1).asRight
     candidateFlow <- (!nextFlow.isEmpty).fold(
                        t = nextFlow.asRight,
                        f = Piece
@@ -104,7 +103,7 @@ object GameModel:
     flow      <- Piece
                    .createPieceFlow(blockMaterial)
                    .map(Random.shuffle(_))
-    initFlow   = flow.tail
+    initFlow   = flow.drop(1)
     initPiece <-
       flow
         .headOption
@@ -135,4 +134,4 @@ object GameModel:
     .keySet
 
   private def factorialWidth(stageWidth: Double): Int =
-    (1 to stageWidth.toInt).reduce(_ + _)
+    (1 to stageWidth.toInt).fold(0)(_ + _)

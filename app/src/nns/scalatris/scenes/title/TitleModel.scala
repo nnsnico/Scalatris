@@ -18,7 +18,7 @@ final case class TitleModel private[title] (
     controlScheme: Seq[CursorDirection.ControlScheme],
     title: Title,
     selectableItems: IndigoNel[Entry],
-) extends BaseSceneModel(tickDelay, lastUpdated):
+) extends BaseSceneModel:
 
   val selectingItem = selectableItems.find(_.status == SelectStatus.Selecting)
 

@@ -87,9 +87,9 @@ class TitleModelTest extends FunSuite {
       .getOrElse(fail("Unexpected error"))
 
     val selectingStatus   =
-      actual.selectableItems.find(_.status == SelectStatus.Selecting).get
+      actual.selectableItems.find(_.status == SelectStatus.Selecting).getOrElse(fail("Unexpected error"))
     val notSelectedStatus =
-      actual.selectableItems.find(_.status == SelectStatus.NotSelected).get
+      actual.selectableItems.find(_.status == SelectStatus.NotSelected).getOrElse(fail("Unexpected error"))
 
     assertEquals(
       actual.selectableItems.length,

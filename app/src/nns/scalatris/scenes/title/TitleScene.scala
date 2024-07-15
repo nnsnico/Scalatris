@@ -15,11 +15,7 @@ object TitleScene extends Scene[StartUpData, GlobalModel, ViewModel]:
     _.titleController,
     (globalModel, controller) =>
       globalModel.copy(
-        titleController = globalModel
-          .titleController
-          .copy(
-            titleModel = controller.titleModel,
-          ),
+        titleController = controller,
       ),
   )
 
@@ -47,7 +43,7 @@ object TitleScene extends Scene[StartUpData, GlobalModel, ViewModel]:
       controller: SceneModel,
       viewModel: SceneViewModel,
   ): Outcome[SceneUpdateFragment] = TitleView.update(
-    model = controller.titleModel,
+    model = controller.model,
     viewConfig = context.startUpData.viewConfig,
   )
 

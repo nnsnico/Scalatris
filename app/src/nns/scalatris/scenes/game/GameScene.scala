@@ -16,11 +16,7 @@ object GameScene extends Scene[StartUpData, GlobalModel, ViewModel]:
       _.gameController,
       (globalModel, controller) =>
         globalModel.copy(
-          gameController = globalModel
-            .gameController
-            .copy(
-              gameModel = controller.gameModel,
-            ),
+          gameController = controller,
         ),
     )
 
@@ -52,7 +48,7 @@ object GameScene extends Scene[StartUpData, GlobalModel, ViewModel]:
   ): Outcome[SceneUpdateFragment] =
     GameView.update(
       viewConfig = context.startUpData.viewConfig,
-      model = controller.gameModel,
+      model = controller.model,
       stage = viewModel,
     )
 

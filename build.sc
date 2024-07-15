@@ -47,6 +47,16 @@ object app extends ScalaJSModule with MillIndigo with ScalafixModule {
   val catsVersion   = "2.10.0"
   val mouseVersion  = "1.2.2"
 
+  val wartremoverVersion = "3.1.5"
+
+  override def compileIvyDeps: T[Agg[Dep]] = Agg(ivy"org.wartremover::wartremover:$wartremoverVersion")
+  override def scalacPluginIvyDeps: Target[Agg[Dep]] = Agg(ivy"org.wartremover::wartremover:$wartremoverVersion")
+
+  override def scalacOptions: Target[Seq[String]] = Seq(
+    "-P:wartremover:traverser:org.wartremover.warts.Unsafe",
+    "-P:wartremover:traverser:org.wartremover.warts.PublicInference",
+  )
+
   def ivyDeps = Agg(
     ivy"io.indigoengine::indigo::$indigoVersion",
     ivy"io.indigoengine::indigo-extras::$indigoVersion",

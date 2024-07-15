@@ -7,52 +7,54 @@ import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions.Either.*
 import nns.scalatris.scenes.game.model.PieceDirection.*
 import nns.scalatris.scenes.game.model.{Piece, PieceDirection, PieceState}
+import nns.scalatris.scenes.{BaseController, BaseSceneModel}
 
-final case class GameController(gameModel: GameModel):
+final case class GameController(
+    override val model: GameModel,
+) extends BaseController[GameModel]:
 
   def handleEvent(
       gameTime: GameTime,
       blockMaterial: Seq[BlockMaterial],
       viewConfig: ViewConfig,
   ): GlobalEvent => Outcome[GameController] =
-    case FrameTick
-        if gameTime.running < gameModel.lastUpdated + gameModel.tickDelay =>
+    case FrameTick if gameTime.running < model.lastUpdated + model.tickDelay =>
       Outcome(this)
     case FrameTick
-        if gameTime.running >= gameModel.lastUpdatedPieceDown + gameModel.tickPieceDown =>
+        if gameTime.running >= model.lastUpdatedPieceDown + model.tickPieceDown =>
       Outcome(
         copy(
-          gameModel = gameModel.dropOnePiece(
+          model = model.dropOnePiece(
             currentTime = gameTime.running,
             stageSize = viewConfig.stageSize,
           ),
         ),
       )
-    case FrameTick        =>
-      gameModel.currentPiece.state match {
+    case FrameTick                                                           =>
+      model.currentPiece.state match {
         case PieceState.Falling =>
           Outcome(
             copy(
-              gameModel = gameModel.updatePiece(
+              model = model.updatePiece(
                 currentTime = gameTime.running.some,
                 stageSize = viewConfig.stageSize,
               ),
             ),
           )
         case PieceState.Landed  =>
-          gameModel
+          model
             .putPieceOnStage(
               stageSize = viewConfig.stageSize,
               blockMaterial = blockMaterial,
-              putPiece = gameModel.currentPiece,
+              putPiece = model.currentPiece,
             )
-            .map(updatedModel => copy(gameModel = updatedModel))
+            .map(updatedModel => copy(model = updatedModel))
       }
-    case e: KeyboardEvent =>
+    case e: KeyboardEvent                                                    =>
       Outcome(
         copy(
-          gameModel = gameModel.updateDirection(
-            direction = gameModel
+          model = model.updateDirection(
+            direction = model
               .controlScheme
               .map(_.toPieceDirection(e))
               .find(_ != PieceDirection.Neutral)
@@ -60,7 +62,7 @@ final case class GameController(gameModel: GameModel):
           ),
         ),
       )
-    case _                => Outcome(this)
+    case _                                                                   => Outcome(this)
 
 object GameController:
 
@@ -70,6 +72,5 @@ object GameController:
   ): Either[Throwable, GameController] = for {
     gameModelOrThrow <- GameModel.init(viewConfig, blockMaterial)
   } yield GameController(
-    gameModel = gameModelOrThrow,
+    model = gameModelOrThrow,
   )
-
