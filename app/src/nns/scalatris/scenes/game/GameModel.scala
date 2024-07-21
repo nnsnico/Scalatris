@@ -63,21 +63,18 @@ final case class GameModel private (
       blockMaterial: Seq[BlockMaterial],
       putPiece: Piece,
   ): Outcome[GameModel] = (for {
-    nextFlow     <- pieceFlow.next
+    nextFlow     <- pieceFlow.next(blockMaterial)
     (piece, flow) = nextFlow
-    candidateFlow <-
-      (!flow.isEmpty).fold(
-        t = flow.asRight,
-        f = Piece.createPieceFlow(blockMaterial).map(Random.shuffle(_)),
-      )
   } yield copy(
     currentPiece = piece,
-    pieceFlow = candidateFlow,
+    pieceFlow = flow,
     currentDirection = PieceDirection.Neutral,
     stageMap = {
       val nextMap = stageMap + putPiece
-      val filteredFillPositionY =
-        GameModel.filterFilledPositionY(nextMap, stageSize.width)
+      val filteredFillPositionY = GameModel.filterFilledPositionY(
+        map = nextMap,
+        stageWidth = stageSize.width,
+      )
       val removableBlockPosition = (p: Piece) =>
         p.currentPosition.filter(v => filteredFillPositionY.contains(v.y))
 
@@ -97,8 +94,8 @@ object GameModel:
       viewConfig: ViewConfig,
       blockMaterial: Seq[BlockMaterial],
   ): Either[Throwable, GameModel] = for {
-    flow                 <- Piece.createPieceFlow(blockMaterial).map(Random.shuffle(_))
-    initPieceFlow        <- flow.next
+    flow                 <- Piece.createPieceFlow(blockMaterial)
+    initPieceFlow        <- flow.next(blockMaterial)
     (initPiece, initFlow) = initPieceFlow
   } yield GameModel(
     tickDelay = Seconds(TICK_FRAME_SECONDS),
