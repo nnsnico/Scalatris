@@ -30,7 +30,7 @@ final case class GameController(
           ),
         ),
       )
-    case FrameTick                                                           =>
+    case FrameTick =>
       model.currentPiece.state match {
         case PieceState.Falling =>
           Outcome(
@@ -41,7 +41,7 @@ final case class GameController(
               ),
             ),
           )
-        case PieceState.Landed  =>
+        case PieceState.Landed =>
           model
             .putPieceOnStage(
               stageSize = viewConfig.stageSize,
@@ -50,7 +50,7 @@ final case class GameController(
             )
             .map(updatedModel => copy(model = updatedModel))
       }
-    case e: KeyboardEvent                                                    =>
+    case e: KeyboardEvent =>
       Outcome(
         copy(
           model = model.updateDirection(
@@ -62,7 +62,8 @@ final case class GameController(
           ),
         ),
       )
-    case _                                                                   => Outcome(this)
+    case _ =>
+      Outcome(this)
 
 object GameController:
 

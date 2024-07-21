@@ -20,9 +20,9 @@ final case class TitleController(
   ): GlobalEvent => Outcome[TitleController] =
     case GameEvent.StartGame =>
       Outcome(this).addGlobalEvents(JumpTo(GameScene.name))
-    case FrameTick           =>
+    case FrameTick =>
       Outcome(this)
-    case e: KeyboardEvent    =>
+    case e: KeyboardEvent =>
       model
         .updateDirection(
           direction = model
@@ -41,4 +41,3 @@ object TitleController:
     viewConfig = viewConfig,
     model = TitleModel.init(),
   )
-
