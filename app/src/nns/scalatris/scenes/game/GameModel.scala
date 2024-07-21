@@ -9,6 +9,7 @@ import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions.Either.toOutcome
 import nns.scalatris.scenes.*
 import nns.scalatris.scenes.game.model.PieceDirection.ControlScheme
+import nns.scalatris.scenes.game.model.PieceFlow.next
 import nns.scalatris.scenes.game.model.{Piece, PieceDirection, PieceKind}
 import nns.scalatris.types.StageSize
 
@@ -62,24 +63,20 @@ final case class GameModel private (
       blockMaterial: Seq[BlockMaterial],
       putPiece: Piece,
   ): Outcome[GameModel] = (for {
-    maybePiece    <-
-      pieceFlow
-        .headOption
-        .toRight(Exception("Unexpected Error: Pieces are empty in flow"))
-    nextFlow      <- pieceFlow.drop(1).asRight
-    candidateFlow <- (!nextFlow.isEmpty).fold(
-                       t = nextFlow.asRight,
-                       f = Piece
-                         .createPieceFlow(blockMaterial)
-                         .map(Random.shuffle(_)),
-                     )
+    nextFlow     <- pieceFlow.next
+    (piece, flow) = nextFlow
+    candidateFlow <-
+      (!flow.isEmpty).fold(
+        t = flow.asRight,
+        f = Piece.createPieceFlow(blockMaterial).map(Random.shuffle(_)),
+      )
   } yield copy(
-    currentPiece = maybePiece,
+    currentPiece = piece,
     pieceFlow = candidateFlow,
     currentDirection = PieceDirection.Neutral,
     stageMap = {
-      val nextMap                = stageMap + putPiece
-      val filteredFillPositionY  =
+      val nextMap = stageMap + putPiece
+      val filteredFillPositionY =
         GameModel.filterFilledPositionY(nextMap, stageSize.width)
       val removableBlockPosition = (p: Piece) =>
         p.currentPosition.filter(v => filteredFillPositionY.contains(v.y))
@@ -100,14 +97,9 @@ object GameModel:
       viewConfig: ViewConfig,
       blockMaterial: Seq[BlockMaterial],
   ): Either[Throwable, GameModel] = for {
-    flow      <- Piece
-                   .createPieceFlow(blockMaterial)
-                   .map(Random.shuffle(_))
-    initFlow   = flow.drop(1)
-    initPiece <-
-      flow
-        .headOption
-        .toRight(Exception("Unexpected Error: Pieces are empty in flow"))
+    flow                 <- Piece.createPieceFlow(blockMaterial).map(Random.shuffle(_))
+    initPieceFlow        <- flow.next
+    (initPiece, initFlow) = initPieceFlow
   } yield GameModel(
     tickDelay = Seconds(TICK_FRAME_SECONDS),
     lastUpdated = Seconds.zero,
