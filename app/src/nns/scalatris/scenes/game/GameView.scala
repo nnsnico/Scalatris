@@ -29,6 +29,12 @@ object GameView:
                 .flatMap(p => drawPiece(p, viewConfig.stageSize.position).toSet),
             ),
           ),
+        )
+        .addLayer(
+          Layer(
+            BindingKey("game-ui-menu"),
+            drawOption(model, viewConfig),
+          ),
         ),
     )
 
@@ -46,6 +52,19 @@ object GameView:
         )
     },
   )
+
+  private def drawOption(
+      model: GameModel,
+      viewConfig: ViewConfig,
+  ): Batch[SceneNode] = if (model.gameState == GameState.Crashed) {
+    Batch(
+      GameFont.toText(
+        "GAME OVER",
+        viewConfig.horizontalCenter,
+        viewConfig.verticalCenter - 50,
+      ).withAlignment(TextAlignment.Center),
+    )
+  } else Batch.empty
 
   private def drawDebugLog(
       viewport: GameViewport,

@@ -4,14 +4,15 @@ import cats.syntax.all.*
 import indigo.*
 import indigo.logger.*
 import mouse.all.*
-import nns.scalatris.ViewConfig
 import nns.scalatris.assets.BlockMaterial
 import nns.scalatris.extensions.Either.toOutcome
 import nns.scalatris.scenes.*
 import nns.scalatris.scenes.game.model.PieceDirection.ControlScheme
 import nns.scalatris.scenes.game.model.PieceFlow.next
+import nns.scalatris.scenes.game.model.StageMap.putOrStay
 import nns.scalatris.scenes.game.model.{Piece, PieceDirection, PieceKind}
 import nns.scalatris.types.StageSize
+import nns.scalatris.ViewConfig
 
 import scala.util.Random
 
@@ -25,6 +26,7 @@ final case class GameModel private (
     controlScheme: Seq[ControlScheme],
     tickPieceDown: Seconds,
     lastUpdatedPieceDown: Seconds,
+    gameState: GameState,
 ) extends BaseSceneModel:
 
   def dropOnePiece(
@@ -65,28 +67,39 @@ final case class GameModel private (
   ): Outcome[GameModel] = (for {
     nextFlow     <- pieceFlow.next(blockMaterial)
     (piece, flow) = nextFlow
+    nextMap <- stageMap
+                 .putOrStay(putPiece)
+                 .toRight(IllegalStateException("No space for block"))
   } yield copy(
     currentPiece = piece,
     pieceFlow = flow,
     currentDirection = PieceDirection.Neutral,
-    stageMap = {
-      val nextMap = stageMap + putPiece
-      val filteredFillPositionY = GameModel.filterFilledPositionY(
-        map = nextMap,
-        stageWidth = stageSize.width,
-      )
-      val removableBlockPosition = (p: Piece) =>
-        p.currentPosition.filter(v => filteredFillPositionY.contains(v.y))
+    stageMap = removeLines(nextMap, stageSize),
+  ))
+    .toOutcome
+    .handleError { case e: IllegalStateException =>
+      Outcome(copy(gameState = GameState.Crashed))
+    }
 
-      nextMap
-        .map(p =>
-          removableBlockPosition(p)
-            .isEmpty
-            .fold(p, p.removeBlock(removableBlockPosition(p))),
-        )
-        .map(p => p.shiftBlocksToDown(filteredFillPositionY))
-    },
-  )).toOutcome
+private def removeLines(
+    nextMap: Set[Piece],
+    stageSize: StageSize,
+): Set[Piece] = {
+  val filteredFillPositionY = GameModel.filterFilledPositionY(
+    nextMap,
+    stageSize.width,
+  )
+  val removableBlockPosition = (p: Piece) =>
+    p.currentPosition.filter(v => filteredFillPositionY.contains(v.y))
+
+  nextMap
+    .map(p =>
+      removableBlockPosition(p)
+        .isEmpty
+        .fold(p, p.removeBlock(removableBlockPosition(p)))
+        .shiftBlocksToDown(filteredFillPositionY),
+    )
+}
 
 object GameModel:
 
@@ -111,6 +124,7 @@ object GameModel:
     ),
     tickPieceDown = Seconds(FALL_DOWN_SECONDS),
     lastUpdatedPieceDown = Seconds.zero,
+    gameState = GameState.Running,
   )
 
   private[game] def filterFilledPositionY(
