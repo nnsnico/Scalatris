@@ -30,7 +30,7 @@ final case class Piece(
     direction match
       case PieceDirection.Neutral =>
         this
-      case PieceDirection.Left    =>
+      case PieceDirection.Left =>
         val nextPosition = currentPosition.map(_ - Vertex(1, 0))
         copy(
           position = (
@@ -44,7 +44,7 @@ final case class Piece(
             position,
           ),
         )
-      case PieceDirection.Right   =>
+      case PieceDirection.Right =>
         val nextPosition = currentPosition.map(pos => pos + Vertex(1, 0))
         copy(
           position = (
@@ -55,7 +55,7 @@ final case class Piece(
             position,
           ),
         )
-      case PieceDirection.Up      =>
+      case PieceDirection.Up =>
         val nextPosition = rotateLeft.map(convertToStagePosition(_, position))
         this.copy(
           localPosition = (
@@ -68,7 +68,7 @@ final case class Piece(
             localPosition,
           ),
         )
-      case PieceDirection.Down    =>
+      case PieceDirection.Down =>
         downPosition(stageSize, placedPieces)
 
   def removeBlock(position: Seq[Vertex]): Piece =
@@ -140,11 +140,11 @@ object Piece:
       blockMaterials: Seq[BlockMaterial],
   ): Either[Throwable, Seq[Piece]] = for {
     piece <- Either.right(createFromMaterials(blockMaterials).collectRight)
-    cond  <- Either.cond(
-               piece.nonEmpty && piece.length == blockMaterials.length,
-               right = piece,
-               left = Exception("Pieces are empty or missing"),
-             )
+    cond <- Either.cond(
+              piece.nonEmpty && piece.length == blockMaterials.length,
+              right = piece,
+              left = Exception("Pieces are empty or missing"),
+            )
   } yield piece
 
   private[model] def createFromMaterials(
@@ -160,35 +160,35 @@ object Piece:
       material: BlockMaterial,
   ): Either[Throwable, Piece] =
     (kind, material) match
-      case (kind @ PieceKind.J, m: BlockMaterial.Blue)    =>
+      case (kind @ PieceKind.J, m: BlockMaterial.Blue) =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = kind.initPosition,
           localPosition = kind.localPos,
         ).asRight
-      case (kind @ PieceKind.S, m: BlockMaterial.Green)   =>
+      case (kind @ PieceKind.S, m: BlockMaterial.Green) =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = kind.initPosition,
           localPosition = kind.localPos,
         ).asRight
-      case (kind @ PieceKind.Z, m: BlockMaterial.Red)     =>
+      case (kind @ PieceKind.Z, m: BlockMaterial.Red) =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = kind.initPosition,
           localPosition = kind.localPos,
         ).asRight
-      case (kind @ PieceKind.L, m: BlockMaterial.Orange)  =>
+      case (kind @ PieceKind.L, m: BlockMaterial.Orange) =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = kind.initPosition,
           localPosition = kind.localPos,
         ).asRight
-      case (kind @ PieceKind.T, m: BlockMaterial.Purple)  =>
+      case (kind @ PieceKind.T, m: BlockMaterial.Purple) =>
         Piece(
           material = m,
           state = PieceState.Falling,
@@ -202,12 +202,12 @@ object Piece:
           position = kind.initPosition,
           localPosition = kind.localPos,
         ).asRight
-      case (kind @ PieceKind.O, m: BlockMaterial.Yellow)  =>
+      case (kind @ PieceKind.O, m: BlockMaterial.Yellow) =>
         Piece(
           material = m,
           state = PieceState.Falling,
           position = kind.initPosition,
           localPosition = kind.localPos,
         ).asRight
-      case _                                              =>
+      case _ =>
         Exception("Piece#create: Failed to create piece").asLeft

@@ -10,7 +10,6 @@ import nns.scalatris.scenes.title.TitleController
 final case class GlobalModel(
     titleController: TitleController,
     gameController: GameController,
-    gameState: GameState,
 )
 
 object GlobalModel:
@@ -23,8 +22,5 @@ object GlobalModel:
   } yield GlobalModel(
     titleController = TitleController.init(viewConfig),
     gameController = gameConOrThrow,
-    gameState = GameState.Running,
   )
 
-enum GameState:
-  case Running, Crashed
